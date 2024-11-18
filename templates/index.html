@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with an API Agent</title>
+
+    <style>
+    .blue-rounded {
+        background-color: #d8e6f5; /* baby blue */
+        border: 1px solid #ccc; /* 1px border */
+        border-radius: 10px; /* rounded corners */
+        padding: 20px; /* 10px padding */
+    }
+    .pre-block {
+        white-space: pre-wrap;
+    }
+    </style>
+</head>
+<body>
+    <h1>Chat with an API Agent</h1>
+    <p>Ask me about the PyTorch RL (Reinforcement Learning) API: <br/>[Conceptual | How To | Tutorial | API | Glossary]</p>
+    <div id="chat-window"></div>
+    <input type="text" id="user_input" required>
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        function sendMessage() {
+            const userInput = document.getElementById('user_input').value;
+            fetch('/query', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_input: userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const chatWindow = document.getElementById('chat-window');
+                chatWindow.innerHTML += `<p><strong>You:</strong> ${userInput}</p>`;
+                chatWindow.innerHTML += `<p><strong>API Agent:</strong> 
+                    <div class="blue-rounded">
+                    <pre class="pre-block">${(data.response ? data.response : data.error)}</pre>
+                    </div></p><hr/>`;
+            });
+        }
+    </script>
+</body>
+</html>

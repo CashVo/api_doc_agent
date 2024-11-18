@@ -1,0 +1,6 @@
+ollama
+transformers
+torch
+beautifulsoup4
+requests
+flask
