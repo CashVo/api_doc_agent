@@ -6,7 +6,8 @@ def basic_prompt(user_input: str = ""):
         prompt = user_input,
         #system=system_prompt, # Instructions to the LLM
         options = {
-            'temperature': 0
+            'temperature': 0,
+            "stream": False
         }
     )
     return response['response']

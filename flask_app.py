@@ -1,8 +1,11 @@
 from flask import Flask, render_template, request
-import ollama
 from utils.helpers import *
+from workflow_manager import WorkflowManager
 
 app = Flask(__name__)
+
+WorkflowManager = WorkflowManager()
+WorkflowManager.start_init_workflow()
 
 print("ReAct agent initialized!!! Reay to chat...")
 

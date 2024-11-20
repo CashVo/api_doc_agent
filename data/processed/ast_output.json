@@ -1,0 +1,766 @@
+[
+    {
+        "name": "DataCollectorBase",
+        "bases": [
+            "IterableDataset"
+        ],
+        "functions": [
+            {
+                "name": "update_policy_weights_",
+                "args": {
+                    "args": [
+                        "self",
+                        "policy_weights"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None"
+            },
+            {
+                "name": "next",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "next(self)"
+            },
+            {
+                "name": "shutdown",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "shutdown(self)"
+            },
+            {
+                "name": "iterator",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "iterator(self) -> Iterator[TensorDictBase]"
+            },
+            {
+                "name": "set_seed",
+                "args": {
+                    "args": [
+                        "self",
+                        "seed",
+                        "static_seed"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int"
+            },
+            {
+                "name": "state_dict",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "state_dict(self) -> OrderedDict"
+            },
+            {
+                "name": "load_state_dict",
+                "args": {
+                    "args": [
+                        "self",
+                        "state_dict"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "load_state_dict(self, state_dict: OrderedDict) -> None"
+            }
+        ]
+    },
+    {
+        "name": "SyncDataCollector",
+        "bases": [
+            "DataCollectorBase"
+        ],
+        "functions": [
+            {
+                "name": "__init__",
+                "args": {
+                    "args": [
+                        "self",
+                        "create_env_fn",
+                        "policy"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        "kwargs"
+                    ],
+                    "kwonlyargs": [
+                        "frames_per_batch",
+                        "total_frames",
+                        "device",
+                        "storing_device",
+                        "policy_device",
+                        "env_device",
+                        "create_env_kwargs",
+                        "max_frames_per_traj",
+                        "init_random_frames",
+                        "reset_at_each_iter",
+                        "postproc",
+                        "split_trajs",
+                        "exploration_type",
+                        "return_same_td",
+                        "reset_when_done",
+                        "interruptor",
+                        "set_truncated",
+                        "use_buffers",
+                        "replay_buffer",
+                        "trust_policy",
+                        "compile_policy",
+                        "cudagraph_policy"
+                    ]
+                },
+                "signature": "__init__(self, create_env_fn: Union[EnvBase, 'EnvCreator', Sequence[Callable[[], EnvBase]]], policy: Optional[Union[TensorDictModule, Callable[[TensorDictBase], TensorDictBase]]]=None, *, frames_per_batch: int, total_frames: int=-1, device: DEVICE_TYPING=None, storing_device: DEVICE_TYPING=None, policy_device: DEVICE_TYPING=None, env_device: DEVICE_TYPING=None, create_env_kwargs: dict | None=None, max_frames_per_traj: int | None=None, init_random_frames: int | None=None, reset_at_each_iter: bool=False, postproc: Callable[[TensorDictBase], TensorDictBase] | None=None, split_trajs: bool | None=None, exploration_type: ExplorationType=DEFAULT_EXPLORATION_TYPE, return_same_td: bool=False, reset_when_done: bool=True, interruptor=None, set_truncated: bool=False, use_buffers: bool | None=None, replay_buffer: ReplayBuffer | None=None, trust_policy: bool=None, compile_policy: bool | Dict[str, Any] | None=None, cudagraph_policy: bool | Dict[str, Any] | None=None, **kwargs)"
+            },
+            {
+                "name": "next",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "next(self)"
+            },
+            {
+                "name": "update_policy_weights_",
+                "args": {
+                    "args": [
+                        "self",
+                        "policy_weights"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None"
+            },
+            {
+                "name": "set_seed",
+                "args": {
+                    "args": [
+                        "self",
+                        "seed",
+                        "static_seed"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int"
+            },
+            {
+                "name": "iterator",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "iterator(self) -> Iterator[TensorDictBase]"
+            },
+            {
+                "name": "rollout",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "rollout(self) -> TensorDictBase"
+            },
+            {
+                "name": "reset",
+                "args": {
+                    "args": [
+                        "self",
+                        "index"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        "kwargs"
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "reset(self, index=None, **kwargs) -> None"
+            },
+            {
+                "name": "shutdown",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "shutdown(self) -> None"
+            },
+            {
+                "name": "state_dict",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "state_dict(self) -> OrderedDict"
+            },
+            {
+                "name": "load_state_dict",
+                "args": {
+                    "args": [
+                        "self",
+                        "state_dict"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        "kwargs"
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "load_state_dict(self, state_dict: OrderedDict, **kwargs) -> None"
+            }
+        ]
+    },
+    {
+        "name": "MultiSyncDataCollector",
+        "bases": [
+            "_MultiDataCollector"
+        ],
+        "functions": [
+            {
+                "name": "next",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "next(self)"
+            },
+            {
+                "name": "shutdown",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "shutdown(self)"
+            },
+            {
+                "name": "set_seed",
+                "args": {
+                    "args": [
+                        "self",
+                        "seed",
+                        "static_seed"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int"
+            },
+            {
+                "name": "state_dict",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "state_dict(self) -> OrderedDict"
+            },
+            {
+                "name": "load_state_dict",
+                "args": {
+                    "args": [
+                        "self",
+                        "state_dict"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "load_state_dict(self, state_dict: OrderedDict) -> None"
+            },
+            {
+                "name": "update_policy_weights_",
+                "args": {
+                    "args": [
+                        "self",
+                        "policy_weights"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None"
+            },
+            {
+                "name": "frames_per_batch_worker",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "frames_per_batch_worker(self)"
+            },
+            {
+                "name": "iterator",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "iterator(self) -> Iterator[TensorDictBase]"
+            }
+        ]
+    },
+    {
+        "name": "MultiaSyncDataCollector",
+        "bases": [
+            "_MultiDataCollector"
+        ],
+        "functions": [
+            {
+                "name": "__init__",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        "args"
+                    ],
+                    "kwargs": [
+                        "kwargs"
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "__init__(self, *args, **kwargs)"
+            },
+            {
+                "name": "next",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "next(self)"
+            },
+            {
+                "name": "shutdown",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "shutdown(self)"
+            },
+            {
+                "name": "set_seed",
+                "args": {
+                    "args": [
+                        "self",
+                        "seed",
+                        "static_seed"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int"
+            },
+            {
+                "name": "state_dict",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "state_dict(self) -> OrderedDict"
+            },
+            {
+                "name": "load_state_dict",
+                "args": {
+                    "args": [
+                        "self",
+                        "state_dict"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "load_state_dict(self, state_dict: OrderedDict) -> None"
+            },
+            {
+                "name": "update_policy_weights_",
+                "args": {
+                    "args": [
+                        "self",
+                        "policy_weights"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None"
+            },
+            {
+                "name": "frames_per_batch_worker",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "frames_per_batch_worker(self)"
+            },
+            {
+                "name": "iterator",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "iterator(self) -> Iterator[TensorDictBase]"
+            },
+            {
+                "name": "reset",
+                "args": {
+                    "args": [
+                        "self",
+                        "reset_idx"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "reset(self, reset_idx: Optional[Sequence[bool]]=None) -> None"
+            }
+        ]
+    },
+    {
+        "name": "aSyncDataCollector",
+        "bases": [
+            "MultiaSyncDataCollector"
+        ],
+        "functions": [
+            {
+                "name": "__init__",
+                "args": {
+                    "args": [
+                        "self",
+                        "create_env_fn",
+                        "policy"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        "kwargs"
+                    ],
+                    "kwonlyargs": [
+                        "frames_per_batch",
+                        "total_frames",
+                        "device",
+                        "storing_device",
+                        "env_device",
+                        "policy_device",
+                        "create_env_kwargs",
+                        "max_frames_per_traj",
+                        "init_random_frames",
+                        "reset_at_each_iter",
+                        "postproc",
+                        "split_trajs",
+                        "exploration_type",
+                        "reset_when_done",
+                        "update_at_each_batch",
+                        "preemptive_threshold",
+                        "num_threads",
+                        "num_sub_threads",
+                        "set_truncated"
+                    ]
+                },
+                "signature": "__init__(self, create_env_fn: Callable[[], EnvBase], policy: Optional[Union[TensorDictModule, Callable[[TensorDictBase], TensorDictBase]]], *, frames_per_batch: int, total_frames: Optional[int]=-1, device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, storing_device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, env_device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, policy_device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, create_env_kwargs: Optional[Sequence[dict]]=None, max_frames_per_traj: int | None=None, init_random_frames: int | None=None, reset_at_each_iter: bool=False, postproc: Optional[Callable[[TensorDictBase], TensorDictBase]]=None, split_trajs: Optional[bool]=None, exploration_type: ExplorationType=DEFAULT_EXPLORATION_TYPE, reset_when_done: bool=True, update_at_each_batch: bool=False, preemptive_threshold: float=None, num_threads: int=None, num_sub_threads: int=1, set_truncated: bool=False, **kwargs)"
+            },
+            {
+                "name": "next",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "next(self)"
+            },
+            {
+                "name": "shutdown",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "shutdown(self)"
+            },
+            {
+                "name": "set_seed",
+                "args": {
+                    "args": [
+                        "self",
+                        "seed",
+                        "static_seed"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int"
+            },
+            {
+                "name": "state_dict",
+                "args": {
+                    "args": [
+                        "self"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "state_dict(self) -> OrderedDict"
+            },
+            {
+                "name": "load_state_dict",
+                "args": {
+                    "args": [
+                        "self",
+                        "state_dict"
+                    ],
+                    "varagrs": [
+                        null
+                    ],
+                    "kwargs": [
+                        null
+                    ],
+                    "kwonlyargs": []
+                },
+                "signature": "load_state_dict(self, state_dict: OrderedDict) -> None"
+            }
+        ]
+    }
+]
