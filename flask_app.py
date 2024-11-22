@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request
-from utils.helpers import *
+from utils import  helpers
 from workflow_manager import WorkflowManager
 
 app = Flask(__name__)
 
 WorkflowManager = WorkflowManager()
-WorkflowManager.start_init_workflow()
+AIAssistant = WorkflowManager.start_init_workflow()
 
 print("ReAct agent initialized!!! Reay to chat...")
 
@@ -22,7 +22,7 @@ def query():
         return {"error": "Prompt is required"}, 400
 
     # Generate response 
-    response = basic_prompt(user_input)
+    response = AIAssistant.prompt(user_input)
 
     html_response = f"{response}"
 

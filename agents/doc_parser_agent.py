@@ -1,10 +1,23 @@
+import json
 from utils import ast_parser, prompt_helper 
-
 
 class DocParserAgent():
     def __init__(self):
         self.documents = []
         self.ASTParser = ast_parser.ASTParser()
+    
+    def parse(self):
+        '''Load a list of files to parse and call the parser'''
+
+        try:
+            with open('data/content_files.json', 'r') as f:
+                content_files = json.load(f)
+        except FileNotFoundError:
+            print("The file was not found.")
+        except json.JSONDecodeError:
+            print("The file is not a valid JSON.")
+
+        self.ast_parser(content_files=content_files["files"])
 
     def ast_parser(self, content_files):
         '''Parse raw code file using an AST'''
@@ -13,9 +26,12 @@ class DocParserAgent():
             self.documents.append(self.ASTParser.parse_file(file=file))
         return self.documents
     
+
+    # WARNING: Currently not working as expected as the `prompt_template` being too large when the full code is added
+    # LLM takes too long to parse and response. May want to chunk it up
     def llm_parser(self, content_files, llm):
         '''Parse raw code file using an LLM'''
-        
+
         prompt_text = prompt_helper.PARSER_TEXT
 
         # Load raw code content

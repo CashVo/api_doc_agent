@@ -4,6 +4,7 @@ class ASTParser:
     def __init__(self):
         self.classes = []
 
+    
     def parse_file(self, file):
         '''Parse a code file into an AST'''
 

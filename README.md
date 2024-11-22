@@ -27,15 +27,13 @@ These are some key features relating to the serving of content process.
 1. Activate the virtual environment: `venv/Scripts/activate`
 1. Run the Flask agent: `python flask_app.py`...follow instructions in terminal to find the web endpoint for the Agent's Web UI. Start chatting with the Doc Bot Agent from there.
 
+## Action plan:
+  * Phase 1: Focus on content curration **[Status: In progress]**
+  * ![Content Curration Diagram](utils/assets/content_curration_workflow.png)
+  * Phase 2: Focus on embedding, vectoring, and indexing content into DB
+  * Phase 3: Focus on RAG Chat Assistant to serve user queries about our content
+
 ## Remarks
-* 
+*
 
-
-# Change Log
-
-## 11/20/24: Added Workflow and Parsing agents
-* Workflow Agent: Got a basic workflow manager setup to handle the content parsing step
-* Parsing Agent:  
-  * I got two parsing functions defined. One using AST and the other using LLM.
-  * At first, I thought I could pass in the entire code file along with prompt template to get the LLM to do all the parsing and writing in one go. But, it's taking way too long to response. Longest wait time was about 3hrs and not even returning with a response. So, I am not sure what it was able to generate in that run. It would save us a lot of coding if I have more powerful hardware to let the LLM do most of the work.
-  * So, the fallback plan is manually parse the code file for class and function signatures. Then, iteratively prompt the LLM to provide the descriptions
+> See [Change Log](change_logs.md) for more details on change history
