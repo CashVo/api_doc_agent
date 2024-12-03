@@ -1,12 +1,12 @@
 [
     {
-        "name": "DataCollectorBase",
+        "class_name": "DataCollectorBase",
         "bases": [
             "IterableDataset"
         ],
         "functions": [
             {
-                "name": "update_policy_weights_",
+                "function_name": "update_policy_weights_",
                 "args": {
                     "args": [
                         "self",
@@ -23,7 +23,7 @@
                 "signature": "update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None"
             },
             {
-                "name": "next",
+                "function_name": "next",
                 "args": {
                     "args": [
                         "self"
@@ -39,7 +39,7 @@
                 "signature": "next(self)"
             },
             {
-                "name": "shutdown",
+                "function_name": "shutdown",
                 "args": {
                     "args": [
                         "self"
@@ -55,7 +55,7 @@
                 "signature": "shutdown(self)"
             },
             {
-                "name": "iterator",
+                "function_name": "iterator",
                 "args": {
                     "args": [
                         "self"
@@ -71,7 +71,7 @@
                 "signature": "iterator(self) -> Iterator[TensorDictBase]"
             },
             {
-                "name": "set_seed",
+                "function_name": "set_seed",
                 "args": {
                     "args": [
                         "self",
@@ -89,7 +89,7 @@
                 "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int"
             },
             {
-                "name": "state_dict",
+                "function_name": "state_dict",
                 "args": {
                     "args": [
                         "self"
@@ -105,7 +105,7 @@
                 "signature": "state_dict(self) -> OrderedDict"
             },
             {
-                "name": "load_state_dict",
+                "function_name": "load_state_dict",
                 "args": {
                     "args": [
                         "self",
@@ -124,13 +124,13 @@
         ]
     },
     {
-        "name": "SyncDataCollector",
+        "class_name": "SyncDataCollector",
         "bases": [
             "DataCollectorBase"
         ],
         "functions": [
             {
-                "name": "__init__",
+                "function_name": "__init__",
                 "args": {
                     "args": [
                         "self",
@@ -171,7 +171,7 @@
                 "signature": "__init__(self, create_env_fn: Union[EnvBase, 'EnvCreator', Sequence[Callable[[], EnvBase]]], policy: Optional[Union[TensorDictModule, Callable[[TensorDictBase], TensorDictBase]]]=None, *, frames_per_batch: int, total_frames: int=-1, device: DEVICE_TYPING=None, storing_device: DEVICE_TYPING=None, policy_device: DEVICE_TYPING=None, env_device: DEVICE_TYPING=None, create_env_kwargs: dict | None=None, max_frames_per_traj: int | None=None, init_random_frames: int | None=None, reset_at_each_iter: bool=False, postproc: Callable[[TensorDictBase], TensorDictBase] | None=None, split_trajs: bool | None=None, exploration_type: ExplorationType=DEFAULT_EXPLORATION_TYPE, return_same_td: bool=False, reset_when_done: bool=True, interruptor=None, set_truncated: bool=False, use_buffers: bool | None=None, replay_buffer: ReplayBuffer | None=None, trust_policy: bool=None, compile_policy: bool | Dict[str, Any] | None=None, cudagraph_policy: bool | Dict[str, Any] | None=None, **kwargs)"
             },
             {
-                "name": "next",
+                "function_name": "next",
                 "args": {
                     "args": [
                         "self"
@@ -187,7 +187,7 @@
                 "signature": "next(self)"
             },
             {
-                "name": "update_policy_weights_",
+                "function_name": "update_policy_weights_",
                 "args": {
                     "args": [
                         "self",
@@ -204,7 +204,7 @@
                 "signature": "update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None"
             },
             {
-                "name": "set_seed",
+                "function_name": "set_seed",
                 "args": {
                     "args": [
                         "self",
@@ -222,7 +222,7 @@
                 "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int"
             },
             {
-                "name": "iterator",
+                "function_name": "iterator",
                 "args": {
                     "args": [
                         "self"
@@ -238,7 +238,7 @@
                 "signature": "iterator(self) -> Iterator[TensorDictBase]"
             },
             {
-                "name": "rollout",
+                "function_name": "rollout",
                 "args": {
                     "args": [
                         "self"
@@ -254,7 +254,7 @@
                 "signature": "rollout(self) -> TensorDictBase"
             },
             {
-                "name": "reset",
+                "function_name": "reset",
                 "args": {
                     "args": [
                         "self",
@@ -271,7 +271,7 @@
                 "signature": "reset(self, index=None, **kwargs) -> None"
             },
             {
-                "name": "shutdown",
+                "function_name": "shutdown",
                 "args": {
                     "args": [
                         "self"
@@ -287,7 +287,7 @@
                 "signature": "shutdown(self) -> None"
             },
             {
-                "name": "state_dict",
+                "function_name": "state_dict",
                 "args": {
                     "args": [
                         "self"
@@ -303,7 +303,7 @@
                 "signature": "state_dict(self) -> OrderedDict"
             },
             {
-                "name": "load_state_dict",
+                "function_name": "load_state_dict",
                 "args": {
                     "args": [
                         "self",
@@ -322,13 +322,13 @@
         ]
     },
     {
-        "name": "MultiSyncDataCollector",
+        "class_name": "MultiSyncDataCollector",
         "bases": [
             "_MultiDataCollector"
         ],
         "functions": [
             {
-                "name": "next",
+                "function_name": "next",
                 "args": {
                     "args": [
                         "self"
@@ -344,7 +344,7 @@
                 "signature": "next(self)"
             },
             {
-                "name": "shutdown",
+                "function_name": "shutdown",
                 "args": {
                     "args": [
                         "self"
@@ -360,7 +360,7 @@
                 "signature": "shutdown(self)"
             },
             {
-                "name": "set_seed",
+                "function_name": "set_seed",
                 "args": {
                     "args": [
                         "self",
@@ -378,7 +378,7 @@
                 "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int"
             },
             {
-                "name": "state_dict",
+                "function_name": "state_dict",
                 "args": {
                     "args": [
                         "self"
@@ -394,7 +394,7 @@
                 "signature": "state_dict(self) -> OrderedDict"
             },
             {
-                "name": "load_state_dict",
+                "function_name": "load_state_dict",
                 "args": {
                     "args": [
                         "self",
@@ -411,7 +411,7 @@
                 "signature": "load_state_dict(self, state_dict: OrderedDict) -> None"
             },
             {
-                "name": "update_policy_weights_",
+                "function_name": "update_policy_weights_",
                 "args": {
                     "args": [
                         "self",
@@ -428,7 +428,7 @@
                 "signature": "update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None"
             },
             {
-                "name": "frames_per_batch_worker",
+                "function_name": "frames_per_batch_worker",
                 "args": {
                     "args": [
                         "self"
@@ -444,7 +444,7 @@
                 "signature": "frames_per_batch_worker(self)"
             },
             {
-                "name": "iterator",
+                "function_name": "iterator",
                 "args": {
                     "args": [
                         "self"
@@ -462,13 +462,13 @@
         ]
     },
     {
-        "name": "MultiaSyncDataCollector",
+        "class_name": "MultiaSyncDataCollector",
         "bases": [
             "_MultiDataCollector"
         ],
         "functions": [
             {
-                "name": "__init__",
+                "function_name": "__init__",
                 "args": {
                     "args": [
                         "self"
@@ -484,7 +484,7 @@
                 "signature": "__init__(self, *args, **kwargs)"
             },
             {
-                "name": "next",
+                "function_name": "next",
                 "args": {
                     "args": [
                         "self"
@@ -500,7 +500,7 @@
                 "signature": "next(self)"
             },
             {
-                "name": "shutdown",
+                "function_name": "shutdown",
                 "args": {
                     "args": [
                         "self"
@@ -516,7 +516,7 @@
                 "signature": "shutdown(self)"
             },
             {
-                "name": "set_seed",
+                "function_name": "set_seed",
                 "args": {
                     "args": [
                         "self",
@@ -534,7 +534,7 @@
                 "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int"
             },
             {
-                "name": "state_dict",
+                "function_name": "state_dict",
                 "args": {
                     "args": [
                         "self"
@@ -550,7 +550,7 @@
                 "signature": "state_dict(self) -> OrderedDict"
             },
             {
-                "name": "load_state_dict",
+                "function_name": "load_state_dict",
                 "args": {
                     "args": [
                         "self",
@@ -567,7 +567,7 @@
                 "signature": "load_state_dict(self, state_dict: OrderedDict) -> None"
             },
             {
-                "name": "update_policy_weights_",
+                "function_name": "update_policy_weights_",
                 "args": {
                     "args": [
                         "self",
@@ -584,7 +584,7 @@
                 "signature": "update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None"
             },
             {
-                "name": "frames_per_batch_worker",
+                "function_name": "frames_per_batch_worker",
                 "args": {
                     "args": [
                         "self"
@@ -600,7 +600,7 @@
                 "signature": "frames_per_batch_worker(self)"
             },
             {
-                "name": "iterator",
+                "function_name": "iterator",
                 "args": {
                     "args": [
                         "self"
@@ -616,7 +616,7 @@
                 "signature": "iterator(self) -> Iterator[TensorDictBase]"
             },
             {
-                "name": "reset",
+                "function_name": "reset",
                 "args": {
                     "args": [
                         "self",
@@ -635,13 +635,13 @@
         ]
     },
     {
-        "name": "aSyncDataCollector",
+        "class_name": "aSyncDataCollector",
         "bases": [
             "MultiaSyncDataCollector"
         ],
         "functions": [
             {
-                "name": "__init__",
+                "function_name": "__init__",
                 "args": {
                     "args": [
                         "self",
@@ -679,7 +679,7 @@
                 "signature": "__init__(self, create_env_fn: Callable[[], EnvBase], policy: Optional[Union[TensorDictModule, Callable[[TensorDictBase], TensorDictBase]]], *, frames_per_batch: int, total_frames: Optional[int]=-1, device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, storing_device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, env_device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, policy_device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, create_env_kwargs: Optional[Sequence[dict]]=None, max_frames_per_traj: int | None=None, init_random_frames: int | None=None, reset_at_each_iter: bool=False, postproc: Optional[Callable[[TensorDictBase], TensorDictBase]]=None, split_trajs: Optional[bool]=None, exploration_type: ExplorationType=DEFAULT_EXPLORATION_TYPE, reset_when_done: bool=True, update_at_each_batch: bool=False, preemptive_threshold: float=None, num_threads: int=None, num_sub_threads: int=1, set_truncated: bool=False, **kwargs)"
             },
             {
-                "name": "next",
+                "function_name": "next",
                 "args": {
                     "args": [
                         "self"
@@ -695,7 +695,7 @@
                 "signature": "next(self)"
             },
             {
-                "name": "shutdown",
+                "function_name": "shutdown",
                 "args": {
                     "args": [
                         "self"
@@ -711,7 +711,7 @@
                 "signature": "shutdown(self)"
             },
             {
-                "name": "set_seed",
+                "function_name": "set_seed",
                 "args": {
                     "args": [
                         "self",
@@ -729,7 +729,7 @@
                 "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int"
             },
             {
-                "name": "state_dict",
+                "function_name": "state_dict",
                 "args": {
                     "args": [
                         "self"
@@ -745,7 +745,7 @@
                 "signature": "state_dict(self) -> OrderedDict"
             },
             {
-                "name": "load_state_dict",
+                "function_name": "load_state_dict",
                 "args": {
                     "args": [
                         "self",

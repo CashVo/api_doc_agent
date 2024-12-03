@@ -1,0 +1,903 @@
+{
+    "collectors.py": [
+        {
+            "function_name": "recursive_map_to_cpu",
+            "args": {
+                "args": [
+                    "dictionary"
+                ],
+                "varagrs": [
+                    null
+                ],
+                "kwargs": [
+                    null
+                ],
+                "kwonlyargs": []
+            },
+            "signature": "recursive_map_to_cpu(dictionary: OrderedDict) -> OrderedDict",
+            "function_code": "def recursive_map_to_cpu(dictionary: OrderedDict) -> OrderedDict:\n    \"\"\"Maps the tensors to CPU through a nested dictionary.\"\"\"\n    return OrderedDict(**{k: recursive_map_to_cpu(item) if isinstance(item, OrderedDict) else item.cpu() if isinstance(item, torch.Tensor) else item for k, item in dictionary.items()})",
+            "description": ""
+        },
+        {
+            "class_name": "DataCollectorBase",
+            "bases": [
+                "IterableDataset"
+            ],
+            "description": "",
+            "overview": "",
+            "functions": [
+                {
+                    "function_name": "update_policy_weights_",
+                    "args": {
+                        "args": [
+                            "self",
+                            "policy_weights"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None",
+                    "function_code": "def update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None:\n    \"\"\"Updates the policy weights if the policy of the data collector and the trained policy live on different devices.\n\n        Args:\n            policy_weights (TensorDictBase, optional): if provided, a TensorDict containing\n                the weights of the policy to be used for the udpdate.\n\n        \"\"\"\n    if policy_weights is not None:\n        self.policy_weights.data.update_(policy_weights)\n    elif self.get_weights_fn is not None:\n        self.policy_weights.data.update_(self.get_weights_fn())",
+                    "description": ""
+                },
+                {
+                    "function_name": "next",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "next(self)",
+                    "function_code": "def next(self):\n    try:\n        if self._iterator is None:\n            self._iterator = iter(self)\n        out = next(self._iterator)\n        out.clear_device_()\n        return out\n    except StopIteration:\n        return None",
+                    "description": ""
+                },
+                {
+                    "function_name": "shutdown",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "shutdown(self)",
+                    "function_code": "@abc.abstractmethod\ndef shutdown(self):\n    raise NotImplementedError",
+                    "description": ""
+                },
+                {
+                    "function_name": "iterator",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "iterator(self) -> Iterator[TensorDictBase]",
+                    "function_code": "@abc.abstractmethod\ndef iterator(self) -> Iterator[TensorDictBase]:\n    raise NotImplementedError",
+                    "description": ""
+                },
+                {
+                    "function_name": "set_seed",
+                    "args": {
+                        "args": [
+                            "self",
+                            "seed",
+                            "static_seed"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int",
+                    "function_code": "@abc.abstractmethod\ndef set_seed(self, seed: int, static_seed: bool=False) -> int:\n    raise NotImplementedError",
+                    "description": ""
+                },
+                {
+                    "function_name": "state_dict",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "state_dict(self) -> OrderedDict",
+                    "function_code": "@abc.abstractmethod\ndef state_dict(self) -> OrderedDict:\n    raise NotImplementedError",
+                    "description": ""
+                },
+                {
+                    "function_name": "load_state_dict",
+                    "args": {
+                        "args": [
+                            "self",
+                            "state_dict"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "load_state_dict(self, state_dict: OrderedDict) -> None",
+                    "function_code": "@abc.abstractmethod\ndef load_state_dict(self, state_dict: OrderedDict) -> None:\n    raise NotImplementedError",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "class_name": "SyncDataCollector",
+            "bases": [
+                "DataCollectorBase"
+            ],
+            "description": "",
+            "overview": "",
+            "functions": [
+                {
+                    "function_name": "__init__",
+                    "args": {
+                        "args": [
+                            "self",
+                            "create_env_fn",
+                            "policy"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            "kwargs"
+                        ],
+                        "kwonlyargs": [
+                            "frames_per_batch",
+                            "total_frames",
+                            "device",
+                            "storing_device",
+                            "policy_device",
+                            "env_device",
+                            "create_env_kwargs",
+                            "max_frames_per_traj",
+                            "init_random_frames",
+                            "reset_at_each_iter",
+                            "postproc",
+                            "split_trajs",
+                            "exploration_type",
+                            "return_same_td",
+                            "reset_when_done",
+                            "interruptor",
+                            "set_truncated",
+                            "use_buffers",
+                            "replay_buffer",
+                            "trust_policy",
+                            "compile_policy",
+                            "cudagraph_policy"
+                        ]
+                    },
+                    "signature": "__init__(self, create_env_fn: Union[EnvBase, 'EnvCreator', Sequence[Callable[[], EnvBase]]], policy: Optional[Union[TensorDictModule, Callable[[TensorDictBase], TensorDictBase]]]=None, *, frames_per_batch: int, total_frames: int=-1, device: DEVICE_TYPING=None, storing_device: DEVICE_TYPING=None, policy_device: DEVICE_TYPING=None, env_device: DEVICE_TYPING=None, create_env_kwargs: dict | None=None, max_frames_per_traj: int | None=None, init_random_frames: int | None=None, reset_at_each_iter: bool=False, postproc: Callable[[TensorDictBase], TensorDictBase] | None=None, split_trajs: bool | None=None, exploration_type: ExplorationType=DEFAULT_EXPLORATION_TYPE, return_same_td: bool=False, reset_when_done: bool=True, interruptor=None, set_truncated: bool=False, use_buffers: bool | None=None, replay_buffer: ReplayBuffer | None=None, trust_policy: bool=None, compile_policy: bool | Dict[str, Any] | None=None, cudagraph_policy: bool | Dict[str, Any] | None=None, **kwargs)",
+                    "function_code": "def __init__(self, create_env_fn: Union[EnvBase, 'EnvCreator', Sequence[Callable[[], EnvBase]]], policy: Optional[Union[TensorDictModule, Callable[[TensorDictBase], TensorDictBase]]]=None, *, frames_per_batch: int, total_frames: int=-1, device: DEVICE_TYPING=None, storing_device: DEVICE_TYPING=None, policy_device: DEVICE_TYPING=None, env_device: DEVICE_TYPING=None, create_env_kwargs: dict | None=None, max_frames_per_traj: int | None=None, init_random_frames: int | None=None, reset_at_each_iter: bool=False, postproc: Callable[[TensorDictBase], TensorDictBase] | None=None, split_trajs: bool | None=None, exploration_type: ExplorationType=DEFAULT_EXPLORATION_TYPE, return_same_td: bool=False, reset_when_done: bool=True, interruptor=None, set_truncated: bool=False, use_buffers: bool | None=None, replay_buffer: ReplayBuffer | None=None, trust_policy: bool=None, compile_policy: bool | Dict[str, Any] | None=None, cudagraph_policy: bool | Dict[str, Any] | None=None, **kwargs):\n    from torchrl.envs.batched_envs import BatchedEnvBase\n    self.closed = True\n    if create_env_kwargs is None:\n        create_env_kwargs = {}\n    if not isinstance(create_env_fn, EnvBase):\n        env = create_env_fn(**create_env_kwargs)\n    else:\n        env = create_env_fn\n        if create_env_kwargs:\n            if not isinstance(env, BatchedEnvBase):\n                raise RuntimeError(f\"kwargs were passed to SyncDataCollector but they can't be set on environment of type {type(create_env_fn)}.\")\n            env.update_kwargs(create_env_kwargs)\n    if policy is None:\n        policy = RandomPolicy(env.full_action_spec)\n    if trust_policy is None:\n        trust_policy = isinstance(policy, (RandomPolicy, CudaGraphModule))\n    self.trust_policy = trust_policy\n    self._read_compile_kwargs(compile_policy, cudagraph_policy)\n    self._traj_pool_val = kwargs.pop('traj_pool', None)\n    if kwargs:\n        raise TypeError(f'Keys {list(kwargs.keys())} are unknown to {type(self).__name__}.')\n    storing_device, policy_device, env_device = self._get_devices(storing_device=storing_device, policy_device=policy_device, env_device=env_device, device=device)\n    self.storing_device = storing_device\n    if self.storing_device is not None and self.storing_device.type != 'cuda':\n        if torch.cuda.is_available():\n            self._sync_storage = torch.cuda.synchronize\n        elif torch.backends.mps.is_available() and hasattr(torch, 'mps'):\n            self._sync_storage = torch.mps.synchronize\n        elif self.storing_device.type == 'cpu':\n            self._sync_storage = _do_nothing\n        else:\n            raise RuntimeError('Non supported device')\n    else:\n        self._sync_storage = _do_nothing\n    self.env_device = env_device\n    if self.env_device is not None and self.env_device.type != 'cuda':\n        if torch.cuda.is_available():\n            self._sync_env = torch.cuda.synchronize\n        elif torch.backends.mps.is_available() and hasattr(torch, 'mps'):\n            self._sync_env = torch.mps.synchronize\n        elif self.env_device.type == 'cpu':\n            self._sync_env = _do_nothing\n        else:\n            raise RuntimeError('Non supported device')\n    else:\n        self._sync_env = _do_nothing\n    self.policy_device = policy_device\n    if self.policy_device is not None and self.policy_device.type != 'cuda':\n        if torch.cuda.is_available():\n            self._sync_policy = torch.cuda.synchronize\n        elif torch.backends.mps.is_available() and hasattr(torch, 'mps'):\n            self._sync_policy = torch.mps.synchronize\n        elif self.policy_device.type == 'cpu':\n            self._sync_policy = _do_nothing\n        else:\n            raise RuntimeError('Non supported device')\n    else:\n        self._sync_policy = _do_nothing\n    self.device = device\n    self._cast_to_policy_device = self.policy_device != self.env_device\n    self.env: EnvBase = env\n    del env\n    self.replay_buffer = replay_buffer\n    if self.replay_buffer is not None:\n        if postproc is not None:\n            raise TypeError('postproc must be None when a replay buffer is passed.')\n        if use_buffers:\n            raise TypeError('replay_buffer is exclusive with use_buffers.')\n    if use_buffers is None:\n        use_buffers = not self.env._has_dynamic_specs and self.replay_buffer is None\n    self._use_buffers = use_buffers\n    self.replay_buffer = replay_buffer\n    self.closed = False\n    if not reset_when_done:\n        raise ValueError('reset_when_done is deprectated.')\n    self.reset_when_done = reset_when_done\n    self.n_env = self.env.batch_size.numel()\n    self.policy, self.get_weights_fn = self._get_policy_and_device(policy=policy, observation_spec=self.env.observation_spec)\n    if isinstance(self.policy, nn.Module):\n        self.policy_weights = TensorDict.from_module(self.policy, as_module=True)\n    else:\n        self.policy_weights = TensorDict()\n    if self.compiled_policy:\n        self.policy = torch.compile(self.policy, **self.compiled_policy_kwargs)\n    if self.cudagraphed_policy:\n        self.policy = CudaGraphModule(self.policy, **self.cudagraphed_policy_kwargs)\n    if self.env_device:\n        self.env: EnvBase = self.env.to(self.env_device)\n    elif self.env.device is not None:\n        self.env_device = self.env.device\n    self._cast_to_env_device = self._cast_to_policy_device or self.env.device != self.storing_device\n    self.max_frames_per_traj = int(max_frames_per_traj) if max_frames_per_traj is not None else 0\n    if self.max_frames_per_traj is not None and self.max_frames_per_traj > 0:\n        for key in self.env.output_spec.keys(True, True):\n            if isinstance(key, str):\n                key = (key,)\n            if 'step_count' in key:\n                raise ValueError(\"A 'step_count' key is already present in the environment and the 'max_frames_per_traj' argument may conflict with a 'StepCounter' that has already been set. Possible solutions: Set max_frames_per_traj to 0 or remove the StepCounter limit from the environment transforms.\")\n        self.env = TransformedEnv(self.env, StepCounter(max_steps=self.max_frames_per_traj))\n    if total_frames is None or total_frames < 0:\n        total_frames = float('inf')\n    else:\n        remainder = total_frames % frames_per_batch\n        if remainder != 0 and RL_WARNINGS:\n            warnings.warn(f'total_frames ({total_frames}) is not exactly divisible by frames_per_batch ({frames_per_batch}).This means {frames_per_batch - remainder} additional frames will be collected.To silence this message, set the environment variable RL_WARNINGS to False.')\n    self.total_frames = int(total_frames) if total_frames != float('inf') else total_frames\n    self.reset_at_each_iter = reset_at_each_iter\n    self.init_random_frames = int(init_random_frames) if init_random_frames is not None else 0\n    if init_random_frames is not None and init_random_frames % frames_per_batch != 0 and RL_WARNINGS:\n        warnings.warn(f'init_random_frames ({init_random_frames}) is not exactly a multiple of frames_per_batch ({frames_per_batch}),  this results in more init_random_frames than requested ({-(-init_random_frames // frames_per_batch) * frames_per_batch}).To silence this message, set the environment variable RL_WARNINGS to False.')\n    self.postproc = postproc\n    if self.postproc is not None and hasattr(self.postproc, 'to') and self.storing_device:\n        self.postproc.to(self.storing_device)\n    if frames_per_batch % self.n_env != 0 and RL_WARNINGS:\n        warnings.warn(f'frames_per_batch ({frames_per_batch}) is not exactly divisible by the number of batched environments ({self.n_env}),  this results in more frames_per_batch per iteration that requested ({-(-frames_per_batch // self.n_env) * self.n_env}).To silence this message, set the environment variable RL_WARNINGS to False.')\n    self.requested_frames_per_batch = int(frames_per_batch)\n    self.frames_per_batch = -(-frames_per_batch // self.n_env)\n    self.exploration_type = exploration_type if exploration_type else DEFAULT_EXPLORATION_TYPE\n    self.return_same_td = return_same_td\n    self.set_truncated = set_truncated\n    self._make_shuttle()\n    if self._use_buffers:\n        self._make_final_rollout()\n    self._set_truncated_keys()\n    if split_trajs is None:\n        split_trajs = False\n    self.split_trajs = split_trajs\n    self._exclude_private_keys = True\n    self.interruptor = interruptor\n    self._frames = 0\n    self._iter = -1",
+                    "description": ""
+                },
+                {
+                    "function_name": "next",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "next(self)",
+                    "function_code": "def next(self):\n    return super().next()",
+                    "description": ""
+                },
+                {
+                    "function_name": "update_policy_weights_",
+                    "args": {
+                        "args": [
+                            "self",
+                            "policy_weights"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None",
+                    "function_code": "def update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None:\n    super().update_policy_weights_(policy_weights)",
+                    "description": ""
+                },
+                {
+                    "function_name": "set_seed",
+                    "args": {
+                        "args": [
+                            "self",
+                            "seed",
+                            "static_seed"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int",
+                    "function_code": "def set_seed(self, seed: int, static_seed: bool=False) -> int:\n    \"\"\"Sets the seeds of the environments stored in the DataCollector.\n\n        Args:\n            seed (int): integer representing the seed to be used for the environment.\n            static_seed(bool, optional): if ``True``, the seed is not incremented.\n                Defaults to False\n\n        Returns:\n            Output seed. This is useful when more than one environment is contained in the DataCollector, as the\n            seed will be incremented for each of these. The resulting seed is the seed of the last environment.\n\n        Examples:\n            >>> from torchrl.envs import ParallelEnv\n            >>> from torchrl.envs.libs.gym import GymEnv\n            >>> from tensordict.nn import TensorDictModule\n            >>> from torch import nn\n            >>> env_fn = lambda: GymEnv(\"Pendulum-v1\")\n            >>> env_fn_parallel = ParallelEnv(6, env_fn)\n            >>> policy = TensorDictModule(nn.Linear(3, 1), in_keys=[\"observation\"], out_keys=[\"action\"])\n            >>> collector = SyncDataCollector(env_fn_parallel, policy, total_frames=300, frames_per_batch=100)\n            >>> out_seed = collector.set_seed(1)  # out_seed = 6\n\n        \"\"\"\n    out = self.env.set_seed(seed, static_seed=static_seed)\n    return out",
+                    "description": ""
+                },
+                {
+                    "function_name": "iterator",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "iterator(self) -> Iterator[TensorDictBase]",
+                    "function_code": "def iterator(self) -> Iterator[TensorDictBase]:\n    \"\"\"Iterates through the DataCollector.\n\n        Yields: TensorDictBase objects containing (chunks of) trajectories\n\n        \"\"\"\n    if self.storing_device and self.storing_device.type == 'cuda':\n        stream = torch.cuda.Stream(self.storing_device, priority=-1)\n        event = stream.record_event()\n        streams = [stream]\n        events = [event]\n    elif self.storing_device is None:\n        streams = []\n        events = []\n        cuda_devices = set()\n\n        def cuda_check(tensor: torch.Tensor):\n            if tensor.is_cuda:\n                cuda_devices.add(tensor.device)\n        if not self._use_buffers:\n            for spec in self.env.specs.values(True, True):\n                if spec.device.type == 'cuda':\n                    if ':' not in str(spec.device):\n                        raise RuntimeError(\"A cuda spec did not have a device associated. Make sure to pass `'cuda:device_num'` to each spec device.\")\n                    cuda_devices.add(spec.device)\n        else:\n            self._final_rollout.apply(cuda_check, filter_empty=True)\n        for device in cuda_devices:\n            streams.append(torch.cuda.Stream(device, priority=-1))\n            events.append(streams[-1].record_event())\n    else:\n        streams = []\n        events = []\n    with contextlib.ExitStack() as stack:\n        for stream in streams:\n            stack.enter_context(torch.cuda.stream(stream))\n        while self._frames < self.total_frames:\n            self._iter += 1\n            tensordict_out = self.rollout()\n            if tensordict_out is None:\n                yield\n                continue\n            self._increment_frames(tensordict_out.numel())\n            if self.split_trajs:\n                tensordict_out = split_trajectories(tensordict_out, prefix='collector')\n            if self.postproc is not None:\n                tensordict_out = self.postproc(tensordict_out)\n            if self._exclude_private_keys:\n\n                def is_private(key):\n                    if isinstance(key, str) and key.startswith('_'):\n                        return True\n                    if isinstance(key, tuple) and any((_key.startswith('_') for _key in key)):\n                        return True\n                    return False\n                excluded_keys = [key for key in tensordict_out.keys(True) if is_private(key)]\n                tensordict_out = tensordict_out.exclude(*excluded_keys, inplace=True)\n            if self.return_same_td:\n                if events:\n                    for event in events:\n                        event.record()\n                        event.synchronize()\n                yield tensordict_out\n            else:\n                yield tensordict_out.clone()",
+                    "description": ""
+                },
+                {
+                    "function_name": "rollout",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "rollout(self) -> TensorDictBase",
+                    "function_code": "@torch.no_grad()\ndef rollout(self) -> TensorDictBase:\n    \"\"\"Computes a rollout in the environment using the provided policy.\n\n        Returns:\n            TensorDictBase containing the computed rollout.\n\n        \"\"\"\n    if self.reset_at_each_iter:\n        self._shuttle.update(self.env.reset())\n    if self._use_buffers:\n        self._final_rollout.fill_(('collector', 'traj_ids'), -1)\n    else:\n        pass\n    tensordicts = []\n    with set_exploration_type(self.exploration_type):\n        for t in range(self.frames_per_batch):\n            if self.init_random_frames is not None and self._frames < self.init_random_frames:\n                self.env.rand_action(self._shuttle)\n            else:\n                if self._cast_to_policy_device:\n                    if self.policy_device is not None:\n                        policy_input = self._shuttle.to(self.policy_device, non_blocking=True)\n                        self._sync_policy()\n                    elif self.policy_device is None:\n                        policy_input = self._shuttle\n                else:\n                    policy_input = self._shuttle\n                policy_output = self.policy(policy_input)\n                if self._shuttle is not policy_output:\n                    self._shuttle.update(policy_output, keys_to_update=self._policy_output_keys)\n            if self._cast_to_env_device:\n                if self.env_device is not None:\n                    env_input = self._shuttle.to(self.env_device, non_blocking=True)\n                    self._sync_env()\n                elif self.env_device is None:\n                    env_input = self._shuttle\n            else:\n                env_input = self._shuttle\n            env_output, env_next_output = self.env.step_and_maybe_reset(env_input)\n            if self._shuttle is not env_output:\n                next_data = env_output.get('next')\n                if self._shuttle_has_no_device:\n                    next_data.clear_device_()\n                self._shuttle.set('next', next_data)\n            if self.replay_buffer is not None:\n                self.replay_buffer.add(self._shuttle)\n                if self._increment_frames(self._shuttle.numel()):\n                    return\n            elif self.storing_device is not None:\n                tensordicts.append(self._shuttle.to(self.storing_device, non_blocking=True))\n                self._sync_storage()\n            else:\n                tensordicts.append(self._shuttle)\n            collector_data = self._shuttle.get('collector').copy()\n            self._shuttle = env_next_output\n            if self._shuttle_has_no_device:\n                self._shuttle.clear_device_()\n            self._shuttle.set('collector', collector_data)\n            self._update_traj_ids(env_output)\n            if self.interruptor is not None and self.interruptor.collection_stopped():\n                if self.replay_buffer is not None:\n                    return\n                result = self._final_rollout\n                if self._use_buffers:\n                    try:\n                        torch.stack(tensordicts, self._final_rollout.ndim - 1, out=self._final_rollout[..., :t + 1])\n                    except RuntimeError:\n                        with self._final_rollout.unlock_():\n                            torch.stack(tensordicts, self._final_rollout.ndim - 1, out=self._final_rollout[..., :t + 1])\n                else:\n                    result = TensorDict.maybe_dense_stack(tensordicts, dim=-1)\n                break\n        else:\n            if self._use_buffers:\n                result = self._final_rollout\n                try:\n                    result = torch.stack(tensordicts, self._final_rollout.ndim - 1, out=self._final_rollout)\n                except RuntimeError:\n                    with self._final_rollout.unlock_():\n                        result = torch.stack(tensordicts, self._final_rollout.ndim - 1, out=self._final_rollout)\n            elif self.replay_buffer is not None:\n                return\n            else:\n                result = TensorDict.maybe_dense_stack(tensordicts, dim=-1)\n                result.refine_names(..., 'time')\n    return self._maybe_set_truncated(result)",
+                    "description": ""
+                },
+                {
+                    "function_name": "reset",
+                    "args": {
+                        "args": [
+                            "self",
+                            "index"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            "kwargs"
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "reset(self, index=None, **kwargs) -> None",
+                    "function_code": "@torch.no_grad()\ndef reset(self, index=None, **kwargs) -> None:\n    \"\"\"Resets the environments to a new initial state.\"\"\"\n    collector_metadata = self._shuttle.get('collector').clone()\n    if index is not None:\n        if prod(self.env.batch_size) == 0:\n            raise RuntimeError('resetting unique env with index is not permitted.')\n        for reset_key, done_keys in zip(self.env.reset_keys, self.env.done_keys_groups):\n            _reset = torch.zeros(self.env.full_done_spec[done_keys[0]].shape, dtype=torch.bool, device=self.env.device)\n            _reset[index] = 1\n            self._shuttle.set(reset_key, _reset)\n    else:\n        _reset = None\n        self._shuttle.zero_()\n    self._shuttle.update(self.env.reset(**kwargs), inplace=True)\n    collector_metadata['traj_ids'] = collector_metadata['traj_ids'] - collector_metadata['traj_ids'].min()\n    self._shuttle['collector'] = collector_metadata",
+                    "description": ""
+                },
+                {
+                    "function_name": "shutdown",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "shutdown(self) -> None",
+                    "function_code": "def shutdown(self) -> None:\n    \"\"\"Shuts down all workers and/or closes the local environment.\"\"\"\n    if not self.closed:\n        self.closed = True\n        del self._shuttle\n        if self._use_buffers:\n            del self._final_rollout\n        if not self.env.is_closed:\n            self.env.close()\n        del self.env\n    return",
+                    "description": ""
+                },
+                {
+                    "function_name": "state_dict",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "state_dict(self) -> OrderedDict",
+                    "function_code": "def state_dict(self) -> OrderedDict:\n    \"\"\"Returns the local state_dict of the data collector (environment and policy).\n\n        Returns:\n            an ordered dictionary with fields :obj:`\"policy_state_dict\"` and\n            `\"env_state_dict\"`.\n\n        \"\"\"\n    from torchrl.envs.batched_envs import BatchedEnvBase\n    if isinstance(self.env, TransformedEnv):\n        env_state_dict = self.env.transform.state_dict()\n    elif isinstance(self.env, BatchedEnvBase):\n        env_state_dict = self.env.state_dict()\n    else:\n        env_state_dict = OrderedDict()\n    if hasattr(self.policy, 'state_dict'):\n        policy_state_dict = self.policy.state_dict()\n        state_dict = OrderedDict(policy_state_dict=policy_state_dict, env_state_dict=env_state_dict)\n    else:\n        state_dict = OrderedDict(env_state_dict=env_state_dict)\n    state_dict.update({'frames': self._frames, 'iter': self._iter})\n    return state_dict",
+                    "description": ""
+                },
+                {
+                    "function_name": "load_state_dict",
+                    "args": {
+                        "args": [
+                            "self",
+                            "state_dict"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            "kwargs"
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "load_state_dict(self, state_dict: OrderedDict, **kwargs) -> None",
+                    "function_code": "def load_state_dict(self, state_dict: OrderedDict, **kwargs) -> None:\n    \"\"\"Loads a state_dict on the environment and policy.\n\n        Args:\n            state_dict (OrderedDict): ordered dictionary containing the fields\n                `\"policy_state_dict\"` and :obj:`\"env_state_dict\"`.\n\n        \"\"\"\n    strict = kwargs.get('strict', True)\n    if strict or 'env_state_dict' in state_dict:\n        self.env.load_state_dict(state_dict['env_state_dict'], **kwargs)\n    if strict or 'policy_state_dict' in state_dict:\n        self.policy.load_state_dict(state_dict['policy_state_dict'], **kwargs)\n    self._frames = state_dict['frames']\n    self._iter = state_dict['iter']",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "class_name": "MultiSyncDataCollector",
+            "bases": [
+                "_MultiDataCollector"
+            ],
+            "description": "",
+            "overview": "",
+            "functions": [
+                {
+                    "function_name": "next",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "next(self)",
+                    "function_code": "def next(self):\n    return super().next()",
+                    "description": ""
+                },
+                {
+                    "function_name": "shutdown",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "shutdown(self)",
+                    "function_code": "def shutdown(self):\n    if hasattr(self, 'out_buffer'):\n        del self.out_buffer\n    if hasattr(self, 'buffers'):\n        del self.buffers\n    return super().shutdown()",
+                    "description": ""
+                },
+                {
+                    "function_name": "set_seed",
+                    "args": {
+                        "args": [
+                            "self",
+                            "seed",
+                            "static_seed"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int",
+                    "function_code": "def set_seed(self, seed: int, static_seed: bool=False) -> int:\n    return super().set_seed(seed, static_seed)",
+                    "description": ""
+                },
+                {
+                    "function_name": "state_dict",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "state_dict(self) -> OrderedDict",
+                    "function_code": "def state_dict(self) -> OrderedDict:\n    return super().state_dict()",
+                    "description": ""
+                },
+                {
+                    "function_name": "load_state_dict",
+                    "args": {
+                        "args": [
+                            "self",
+                            "state_dict"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "load_state_dict(self, state_dict: OrderedDict) -> None",
+                    "function_code": "def load_state_dict(self, state_dict: OrderedDict) -> None:\n    return super().load_state_dict(state_dict)",
+                    "description": ""
+                },
+                {
+                    "function_name": "update_policy_weights_",
+                    "args": {
+                        "args": [
+                            "self",
+                            "policy_weights"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None",
+                    "function_code": "def update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None:\n    super().update_policy_weights_(policy_weights)",
+                    "description": ""
+                },
+                {
+                    "function_name": "frames_per_batch_worker",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "frames_per_batch_worker(self)",
+                    "function_code": "@property\ndef frames_per_batch_worker(self):\n    if self.requested_frames_per_batch % self.num_workers != 0 and RL_WARNINGS:\n        warnings.warn(f'frames_per_batch {self.requested_frames_per_batch} is not exactly divisible by the number of collector workers {self.num_workers}, this results in more frames_per_batch per iteration that requested.To silence this message, set the environment variable RL_WARNINGS to False.')\n    frames_per_batch_worker = -(-self.requested_frames_per_batch // self.num_workers)\n    return frames_per_batch_worker",
+                    "description": ""
+                },
+                {
+                    "function_name": "iterator",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "iterator(self) -> Iterator[TensorDictBase]",
+                    "function_code": "def iterator(self) -> Iterator[TensorDictBase]:\n    cat_results = self.cat_results\n    if cat_results is None:\n        cat_results = 'stack'\n    self.buffers = {}\n    dones = [False for _ in range(self.num_workers)]\n    workers_frames = [0 for _ in range(self.num_workers)]\n    same_device = None\n    self.out_buffer = None\n    preempt = self.interruptor is not None and self.preemptive_threshold < 1.0\n    while not all(dones) and self._frames < self.total_frames:\n        _check_for_faulty_process(self.procs)\n        if self.update_at_each_batch:\n            self.update_policy_weights_()\n        for idx in range(self.num_workers):\n            if self.init_random_frames is not None and self._frames < self.init_random_frames:\n                msg = 'continue_random'\n            else:\n                msg = 'continue'\n            self.pipes[idx].send((None, msg))\n        self._iter += 1\n        if preempt:\n            self.interruptor.start_collection()\n            while self.queue_out.qsize() < int(self.num_workers * self.preemptive_threshold):\n                continue\n            self.interruptor.stop_collection()\n            while self.queue_out.qsize() < int(self.num_workers):\n                continue\n        for _ in range(self.num_workers):\n            new_data, j = self.queue_out.get()\n            use_buffers = self._use_buffers\n            if self.replay_buffer is not None:\n                idx = new_data\n                workers_frames[idx] = workers_frames[idx] + self.frames_per_batch_worker\n                continue\n            elif j == 0 or not use_buffers:\n                try:\n                    data, idx = new_data\n                    self.buffers[idx] = data\n                    if use_buffers is None and j > 0:\n                        self._use_buffers = False\n                except TypeError:\n                    if use_buffers is None:\n                        self._use_buffers = True\n                        idx = new_data\n                    else:\n                        raise\n            else:\n                idx = new_data\n            if preempt:\n                if cat_results != 'stack':\n                    buffers = {}\n                    for idx, buffer in self.buffers.items():\n                        valid = buffer.get(('collector', 'traj_ids')) != -1\n                        if valid.ndim > 2:\n                            valid = valid.flatten(0, -2)\n                        if valid.ndim == 2:\n                            valid = valid.any(0)\n                        buffers[idx] = buffer[..., valid]\n                else:\n                    for buffer in self.buffers.values():\n                        with buffer.unlock_():\n                            buffer.set(('collector', 'mask'), buffer.get(('collector', 'traj_ids')) != -1)\n                    buffers = self.buffers\n            else:\n                buffers = self.buffers\n            workers_frames[idx] = workers_frames[idx] + buffers[idx].numel()\n            if workers_frames[idx] >= self.total_frames:\n                dones[idx] = True\n        if self.replay_buffer is not None:\n            yield\n            self._frames += self.frames_per_batch_worker * self.num_workers\n            continue\n        n_collected = 0\n        for idx in range(self.num_workers):\n            buffer = buffers[idx]\n            traj_ids = buffer.get(('collector', 'traj_ids'))\n            if preempt:\n                if cat_results == 'stack':\n                    mask_frames = buffer.get(('collector', 'traj_ids')) != -1\n                    n_collected += mask_frames.sum().cpu()\n                else:\n                    n_collected += traj_ids.numel()\n            else:\n                n_collected += traj_ids.numel()\n        if same_device is None:\n            prev_device = None\n            same_device = True\n            for item in self.buffers.values():\n                if prev_device is None:\n                    prev_device = item.device\n                else:\n                    same_device = same_device and item.device == prev_device\n        if cat_results == 'stack':\n            stack = torch.stack if self._use_buffers else TensorDict.maybe_dense_stack\n            if same_device:\n                self.out_buffer = stack(list(buffers.values()), 0)\n            else:\n                self.out_buffer = stack([item.cpu() for item in buffers.values()], 0)\n        else:\n            if self._use_buffers is None:\n                torchrl_logger.warning('use_buffer not specified and not yet inferred from data, assuming `True`.')\n            elif not self._use_buffers:\n                raise RuntimeError('Cannot concatenate results with use_buffers=False')\n            try:\n                if same_device:\n                    self.out_buffer = torch.cat(list(buffers.values()), cat_results)\n                else:\n                    self.out_buffer = torch.cat([item.cpu() for item in buffers.values()], cat_results)\n            except RuntimeError as err:\n                if preempt and cat_results != -1 and ('Sizes of tensors must match' in str(err)):\n                    raise RuntimeError(\"The value provided to cat_results isn't compatible with the collectors outputs. Consider using `cat_results=-1`.\")\n                raise\n        if self.split_trajs:\n            out = split_trajectories(self.out_buffer, prefix='collector')\n        else:\n            out = self.out_buffer\n        if cat_results in (-1, 'stack'):\n            out.refine_names(*[None] * (out.ndim - 1) + ['time'])\n        self._frames += n_collected\n        if self.postprocs:\n            self.postprocs = self.postprocs.to(out.device)\n            out = self.postprocs(out)\n        if self._exclude_private_keys:\n            excluded_keys = [key for key in out.keys() if key.startswith('_')]\n            if excluded_keys:\n                out = out.exclude(*excluded_keys)\n        yield out\n        del out\n    del self.buffers\n    self.out_buffer = None",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "class_name": "MultiaSyncDataCollector",
+            "bases": [
+                "_MultiDataCollector"
+            ],
+            "description": "",
+            "overview": "",
+            "functions": [
+                {
+                    "function_name": "__init__",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            "args"
+                        ],
+                        "kwargs": [
+                            "kwargs"
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "__init__(self, *args, **kwargs)",
+                    "function_code": "def __init__(self, *args, **kwargs):\n    super().__init__(*args, **kwargs)\n    self.out_tensordicts = defaultdict(lambda: None)\n    self.running = False\n    if self.postprocs is not None:\n        postproc = self.postprocs\n        self.postprocs = {}\n        for _device in self.storing_device:\n            if _device not in self.postprocs:\n                self.postprocs[_device] = deepcopy(postproc).to(_device)",
+                    "description": ""
+                },
+                {
+                    "function_name": "next",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "next(self)",
+                    "function_code": "def next(self):\n    return super().next()",
+                    "description": ""
+                },
+                {
+                    "function_name": "shutdown",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "shutdown(self)",
+                    "function_code": "def shutdown(self):\n    if hasattr(self, 'out_tensordicts'):\n        del self.out_tensordicts\n    return super().shutdown()",
+                    "description": ""
+                },
+                {
+                    "function_name": "set_seed",
+                    "args": {
+                        "args": [
+                            "self",
+                            "seed",
+                            "static_seed"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int",
+                    "function_code": "def set_seed(self, seed: int, static_seed: bool=False) -> int:\n    return super().set_seed(seed, static_seed)",
+                    "description": ""
+                },
+                {
+                    "function_name": "state_dict",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "state_dict(self) -> OrderedDict",
+                    "function_code": "def state_dict(self) -> OrderedDict:\n    return super().state_dict()",
+                    "description": ""
+                },
+                {
+                    "function_name": "load_state_dict",
+                    "args": {
+                        "args": [
+                            "self",
+                            "state_dict"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "load_state_dict(self, state_dict: OrderedDict) -> None",
+                    "function_code": "def load_state_dict(self, state_dict: OrderedDict) -> None:\n    return super().load_state_dict(state_dict)",
+                    "description": ""
+                },
+                {
+                    "function_name": "update_policy_weights_",
+                    "args": {
+                        "args": [
+                            "self",
+                            "policy_weights"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None",
+                    "function_code": "def update_policy_weights_(self, policy_weights: Optional[TensorDictBase]=None) -> None:\n    super().update_policy_weights_(policy_weights)",
+                    "description": ""
+                },
+                {
+                    "function_name": "frames_per_batch_worker",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "frames_per_batch_worker(self)",
+                    "function_code": "@property\ndef frames_per_batch_worker(self):\n    return self.requested_frames_per_batch",
+                    "description": ""
+                },
+                {
+                    "function_name": "iterator",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "iterator(self) -> Iterator[TensorDictBase]",
+                    "function_code": "def iterator(self) -> Iterator[TensorDictBase]:\n    if self.update_at_each_batch:\n        self.update_policy_weights_()\n    for i in range(self.num_workers):\n        if self.init_random_frames is not None and self.init_random_frames > 0:\n            self.pipes[i].send((None, 'continue_random'))\n        else:\n            self.pipes[i].send((None, 'continue'))\n    self.running = True\n    workers_frames = [0 for _ in range(self.num_workers)]\n    while self._frames < self.total_frames:\n        self._iter += 1\n        while True:\n            try:\n                idx, j, out = self._get_from_queue(timeout=10.0)\n                break\n            except TimeoutError:\n                _check_for_faulty_process(self.procs)\n        if self.replay_buffer is None:\n            worker_frames = out.numel()\n            if self.split_trajs:\n                out = split_trajectories(out, prefix='collector')\n        else:\n            worker_frames = self.frames_per_batch_worker\n        self._frames += worker_frames\n        workers_frames[idx] = workers_frames[idx] + worker_frames\n        if self.postprocs:\n            out = self.postprocs[out.device](out)\n        if self.init_random_frames is not None and self._frames < self.init_random_frames:\n            msg = 'continue_random'\n        else:\n            msg = 'continue'\n        self.pipes[idx].send((idx, msg))\n        if out is not None and self._exclude_private_keys:\n            excluded_keys = [key for key in out.keys() if key.startswith('_')]\n            out = out.exclude(*excluded_keys)\n        yield out\n    self.running = False",
+                    "description": ""
+                },
+                {
+                    "function_name": "reset",
+                    "args": {
+                        "args": [
+                            "self",
+                            "reset_idx"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "reset(self, reset_idx: Optional[Sequence[bool]]=None) -> None",
+                    "function_code": "def reset(self, reset_idx: Optional[Sequence[bool]]=None) -> None:\n    super().reset(reset_idx)\n    if self.queue_out.full():\n        time.sleep(_TIMEOUT)\n    if self.queue_out.full():\n        raise Exception('self.queue_out is full')\n    if self.running:\n        for idx in range(self.num_workers):\n            if self.init_random_frames is not None and self._frames < self.init_random_frames:\n                self.pipes[idx].send((idx, 'continue_random'))\n            else:\n                self.pipes[idx].send((idx, 'continue'))",
+                    "description": ""
+                }
+            ]
+        },
+        {
+            "class_name": "aSyncDataCollector",
+            "bases": [
+                "MultiaSyncDataCollector"
+            ],
+            "description": "",
+            "overview": "",
+            "functions": [
+                {
+                    "function_name": "__init__",
+                    "args": {
+                        "args": [
+                            "self",
+                            "create_env_fn",
+                            "policy"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            "kwargs"
+                        ],
+                        "kwonlyargs": [
+                            "frames_per_batch",
+                            "total_frames",
+                            "device",
+                            "storing_device",
+                            "env_device",
+                            "policy_device",
+                            "create_env_kwargs",
+                            "max_frames_per_traj",
+                            "init_random_frames",
+                            "reset_at_each_iter",
+                            "postproc",
+                            "split_trajs",
+                            "exploration_type",
+                            "reset_when_done",
+                            "update_at_each_batch",
+                            "preemptive_threshold",
+                            "num_threads",
+                            "num_sub_threads",
+                            "set_truncated"
+                        ]
+                    },
+                    "signature": "__init__(self, create_env_fn: Callable[[], EnvBase], policy: Optional[Union[TensorDictModule, Callable[[TensorDictBase], TensorDictBase]]], *, frames_per_batch: int, total_frames: Optional[int]=-1, device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, storing_device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, env_device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, policy_device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, create_env_kwargs: Optional[Sequence[dict]]=None, max_frames_per_traj: int | None=None, init_random_frames: int | None=None, reset_at_each_iter: bool=False, postproc: Optional[Callable[[TensorDictBase], TensorDictBase]]=None, split_trajs: Optional[bool]=None, exploration_type: ExplorationType=DEFAULT_EXPLORATION_TYPE, reset_when_done: bool=True, update_at_each_batch: bool=False, preemptive_threshold: float=None, num_threads: int=None, num_sub_threads: int=1, set_truncated: bool=False, **kwargs)",
+                    "function_code": "def __init__(self, create_env_fn: Callable[[], EnvBase], policy: Optional[Union[TensorDictModule, Callable[[TensorDictBase], TensorDictBase]]], *, frames_per_batch: int, total_frames: Optional[int]=-1, device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, storing_device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, env_device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, policy_device: DEVICE_TYPING | Sequence[DEVICE_TYPING] | None=None, create_env_kwargs: Optional[Sequence[dict]]=None, max_frames_per_traj: int | None=None, init_random_frames: int | None=None, reset_at_each_iter: bool=False, postproc: Optional[Callable[[TensorDictBase], TensorDictBase]]=None, split_trajs: Optional[bool]=None, exploration_type: ExplorationType=DEFAULT_EXPLORATION_TYPE, reset_when_done: bool=True, update_at_each_batch: bool=False, preemptive_threshold: float=None, num_threads: int=None, num_sub_threads: int=1, set_truncated: bool=False, **kwargs):\n    super().__init__(create_env_fn=[create_env_fn], policy=policy, total_frames=total_frames, create_env_kwargs=[create_env_kwargs], max_frames_per_traj=max_frames_per_traj, frames_per_batch=frames_per_batch, reset_at_each_iter=reset_at_each_iter, init_random_frames=init_random_frames, postproc=postproc, split_trajs=split_trajs, device=device, policy_device=policy_device, env_device=env_device, storing_device=storing_device, exploration_type=exploration_type, reset_when_done=reset_when_done, update_at_each_batch=update_at_each_batch, preemptive_threshold=preemptive_threshold, num_threads=num_threads, num_sub_threads=num_sub_threads, set_truncated=set_truncated)",
+                    "description": ""
+                },
+                {
+                    "function_name": "next",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "next(self)",
+                    "function_code": "def next(self):\n    return super().next()",
+                    "description": ""
+                },
+                {
+                    "function_name": "shutdown",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "shutdown(self)",
+                    "function_code": "def shutdown(self):\n    return super().shutdown()",
+                    "description": ""
+                },
+                {
+                    "function_name": "set_seed",
+                    "args": {
+                        "args": [
+                            "self",
+                            "seed",
+                            "static_seed"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int",
+                    "function_code": "def set_seed(self, seed: int, static_seed: bool=False) -> int:\n    return super().set_seed(seed, static_seed)",
+                    "description": ""
+                },
+                {
+                    "function_name": "state_dict",
+                    "args": {
+                        "args": [
+                            "self"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "state_dict(self) -> OrderedDict",
+                    "function_code": "def state_dict(self) -> OrderedDict:\n    return super().state_dict()",
+                    "description": ""
+                },
+                {
+                    "function_name": "load_state_dict",
+                    "args": {
+                        "args": [
+                            "self",
+                            "state_dict"
+                        ],
+                        "varagrs": [
+                            null
+                        ],
+                        "kwargs": [
+                            null
+                        ],
+                        "kwonlyargs": []
+                    },
+                    "signature": "load_state_dict(self, state_dict: OrderedDict) -> None",
+                    "function_code": "def load_state_dict(self, state_dict: OrderedDict) -> None:\n    return super().load_state_dict(state_dict)",
+                    "description": ""
+                }
+            ]
+        }
+    ],
+    "utils.py": [
+        {
+            "function_name": "split_trajectories",
+            "args": {
+                "args": [
+                    "rollout_tensordict"
+                ],
+                "varagrs": [
+                    null
+                ],
+                "kwargs": [
+                    null
+                ],
+                "kwonlyargs": [
+                    "prefix",
+                    "trajectory_key",
+                    "done_key",
+                    "as_nested"
+                ]
+            },
+            "signature": "split_trajectories(rollout_tensordict: TensorDictBase, *, prefix=None, trajectory_key: NestedKey | None=None, done_key: NestedKey | None=None, as_nested: bool=False) -> TensorDictBase",
+            "function_code": "@set_lazy_legacy(False)\ndef split_trajectories(rollout_tensordict: TensorDictBase, *, prefix=None, trajectory_key: NestedKey | None=None, done_key: NestedKey | None=None, as_nested: bool=False) -> TensorDictBase:\n    \"\"\"A util function for trajectory separation.\n\n    Takes a tensordict with a key traj_ids that indicates the id of each trajectory.\n\n    From there, builds a B x T x ... zero-padded tensordict with B batches on max duration T\n\n    Args:\n        rollout_tensordict (TensorDictBase): a rollout with adjacent trajectories\n            along the last dimension.\n\n    Keyword Args:\n        prefix (NestedKey, optional): the prefix used to read and write meta-data,\n            such as ``\"traj_ids\"`` (the optional integer id of each trajectory)\n            and the ``\"mask\"`` entry indicating which data are valid and which\n            aren't. Defaults to ``\"collector\"`` if the input has a ``\"collector\"``\n            entry, ``()`` (no prefix) otherwise.\n            ``prefix`` is kept as a legacy feature and will be deprecated eventually.\n            Prefer ``trajectory_key`` or ``done_key`` whenever possible.\n        trajectory_key (NestedKey, optional): the key pointing to the trajectory\n            ids. Supersedes ``done_key`` and ``prefix``. If not provided, defaults\n            to ``(prefix, \"traj_ids\")``.\n        done_key (NestedKey, optional): the key pointing to the ``\"done\"\"`` signal,\n            if the trajectory could not be directly recovered. Defaults to ``\"done\"``.\n        as_nested (bool or torch.layout, optional): whether to return the results as nested\n            tensors. Defaults to ``False``. If a ``torch.layout`` is provided, it will be used\n            to construct the nested tensor, otherwise the default layout will be used.\n\n            .. note:: Using ``split_trajectories(tensordict, as_nested=True).to_padded_tensor(mask=mask_key)``\n                should result in the exact same result as ``as_nested=False``. Since this is an experimental\n                feature and relies on nested_tensors, which API may change in the future, we made this\n                an optional feature. The runtime should be faster with ``as_nested=True``.\n\n            .. note:: Providing a layout lets the user control whether the nested tensor is to be used\n                with ``torch.strided`` or ``torch.jagged`` layout. While the former has slightly more\n                capabilities at the time of writing, the second will be the main focus of the PyTorch team\n                in the future due to its better compatibility with :func:`~torch.compile`.\n\n    Returns:\n        A new tensordict with a leading dimension corresponding to the trajectory.\n        A ``\"mask\"`` boolean entry sharing the ``trajectory_key`` prefix\n        and the tensordict shape is also added. It indicated the valid elements of the tensordict,\n        as well as a ``\"traj_ids\"`` entry if ``trajectory_key`` could not be found.\n\n    Examples:\n        >>> from tensordict import TensorDict\n        >>> import torch\n        >>> from torchrl.collectors.utils import split_trajectories\n        >>> obs = torch.cat([torch.arange(10), torch.arange(5)])\n        >>> obs_ = torch.cat([torch.arange(1, 11), torch.arange(1, 6)])\n        >>> done = torch.zeros(15, dtype=torch.bool)\n        >>> done[9] = True\n        >>> trajectory_id = torch.cat([torch.zeros(10, dtype=torch.int32),\n        ...     torch.ones(5, dtype=torch.int32)])\n        >>> data = TensorDict({\"obs\": obs, (\"next\", \"obs\"): obs_, (\"next\", \"done\"): done, \"trajectory\": trajectory_id}, batch_size=[15])\n        >>> data_split = split_trajectories(data, done_key=\"done\")\n        >>> print(data_split)\n        TensorDict(\n            fields={\n                mask: Tensor(shape=torch.Size([2, 10]), device=cpu, dtype=torch.bool, is_shared=False),\n                next: TensorDict(\n                    fields={\n                        done: Tensor(shape=torch.Size([2, 10]), device=cpu, dtype=torch.bool, is_shared=False),\n                        obs: Tensor(shape=torch.Size([2, 10]), device=cpu, dtype=torch.int64, is_shared=False)},\n                    batch_size=torch.Size([2, 10]),\n                    device=None,\n                    is_shared=False),\n                obs: Tensor(shape=torch.Size([2, 10]), device=cpu, dtype=torch.int64, is_shared=False),\n                traj_ids: Tensor(shape=torch.Size([2, 10]), device=cpu, dtype=torch.int64, is_shared=False),\n                trajectory: Tensor(shape=torch.Size([2, 10]), device=cpu, dtype=torch.int32, is_shared=False)},\n            batch_size=torch.Size([2, 10]),\n            device=None,\n            is_shared=False)\n        >>> # check that split_trajectories got the trajectories right with the done signal\n        >>> assert (data_split[\"traj_ids\"] == data_split[\"trajectory\"]).all()\n        >>> print(data_split[\"mask\"])\n        tensor([[ True,  True,  True,  True,  True,  True,  True,  True,  True,  True],\n                [ True,  True,  True,  True,  True, False, False, False, False, False]])\n        >>> data_split = split_trajectories(data, trajectory_key=\"trajectory\")\n        >>> print(data_split)\n        TensorDict(\n            fields={\n                mask: Tensor(shape=torch.Size([2, 10]), device=cpu, dtype=torch.bool, is_shared=False),\n                next: TensorDict(\n                    fields={\n                        done: Tensor(shape=torch.Size([2, 10]), device=cpu, dtype=torch.bool, is_shared=False),\n                        obs: Tensor(shape=torch.Size([2, 10]), device=cpu, dtype=torch.int64, is_shared=False)},\n                    batch_size=torch.Size([2, 10]),\n                    device=None,\n                    is_shared=False),\n                obs: Tensor(shape=torch.Size([2, 10]), device=cpu, dtype=torch.int64, is_shared=False),\n                trajectory: Tensor(shape=torch.Size([2, 10]), device=cpu, dtype=torch.int32, is_shared=False)},\n            batch_size=torch.Size([2, 10]),\n            device=None,\n            is_shared=False)\n\n    \"\"\"\n    mask_key = None\n    if trajectory_key is not None:\n        from torchrl.envs.utils import _replace_last\n        traj_ids_key = trajectory_key\n        mask_key = _replace_last(trajectory_key, 'mask')\n    else:\n        if prefix is None and 'collector' in rollout_tensordict.keys():\n            prefix = 'collector'\n        if prefix is None:\n            traj_ids_key = 'traj_ids'\n            mask_key = 'mask'\n        else:\n            traj_ids_key = (prefix, 'traj_ids')\n            mask_key = (prefix, 'mask')\n    rollout_tensordict = rollout_tensordict.copy()\n    traj_ids = rollout_tensordict.get(traj_ids_key, None)\n    if traj_ids is None:\n        if done_key is None:\n            done_key = 'done'\n        done_key = ('next', done_key)\n        done = rollout_tensordict.get(done_key)\n        idx = (slice(None),) * (rollout_tensordict.ndim - 1) + (slice(None, -1),)\n        done_sel = done[idx]\n        pads = [1, 0]\n        pads = [0, 0] * (done.ndim - rollout_tensordict.ndim) + pads\n        done_sel = torch.nn.functional.pad(done_sel, pads)\n        if done_sel.shape != done.shape:\n            raise RuntimeError(f'done and done_sel have different shape {done.shape} - {done_sel.shape} ')\n        traj_ids = done_sel.cumsum(rollout_tensordict.ndim - 1)\n        traj_ids = traj_ids.squeeze(-1)\n        if rollout_tensordict.ndim > 1:\n            for i in range(1, rollout_tensordict.shape[0]):\n                traj_ids[i] += traj_ids[i - 1].max() + 1\n        rollout_tensordict.set(traj_ids_key, traj_ids)\n    splits = traj_ids.reshape(-1)\n    splits = [(splits == i).sum().item() for i in splits.unique_consecutive()]\n    if len(set(splits)) == 1 and splits[0] == traj_ids.shape[-1]:\n        rollout_tensordict.set(mask_key, torch.ones(rollout_tensordict.shape, device=rollout_tensordict.device, dtype=torch.bool))\n        if rollout_tensordict.ndimension() == 1:\n            rollout_tensordict = rollout_tensordict.unsqueeze(0)\n        return rollout_tensordict\n    out_splits = rollout_tensordict.reshape(-1)\n    if as_nested:\n        if hasattr(torch, '_nested_compute_contiguous_strides_offsets'):\n\n            def nest(x, splits=splits):\n                shape = torch.tensor([[int(split), *x.shape[1:]] for split in splits])\n                return torch._nested_view_from_buffer(x.reshape(-1), shape, *torch._nested_compute_contiguous_strides_offsets(shape))\n            return out_splits._fast_apply(nest, batch_size=[len(splits), -1])\n        else:\n            out_splits = out_splits.split(splits, 0)\n            layout = as_nested if as_nested is not bool else None\n            if torch.__version__ < '2.4':\n                if layout not in (True,):\n                    raise RuntimeError(f'layout={layout} is only available for torch>=v2.4')\n\n                def nest(*x):\n                    return torch.nested.nested_tensor(list(x))\n            else:\n\n                def nest(*x):\n                    return torch.nested.nested_tensor(list(x), layout=layout)\n            return out_splits[0]._fast_apply(nest, *out_splits[1:], batch_size=[len(out_splits), *out_splits[0].batch_size[:-1], -1])\n    out_splits = out_splits.split(splits, 0)\n    for out_split in out_splits:\n        out_split.set(mask_key, torch.ones(out_split.shape, dtype=torch.bool, device=out_split.device))\n    if len(out_splits) > 1:\n        MAX = max(*[out_split.shape[0] for out_split in out_splits])\n    else:\n        MAX = out_splits[0].shape[0]\n    td = torch.stack([pad(out_split, [0, MAX - out_split.shape[0]]) for out_split in out_splits], 0)\n    return td",
+            "description": ""
+        }
+    ]
+}

@@ -4,3 +4,5 @@ torch
 beautifulsoup4
 requests
 flask
+rich
+tqdm

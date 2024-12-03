@@ -1,5 +1,6 @@
 {
     "files":[
-        "../rl/torchrl/collectors/collectors.py"
+        "../rl/torchrl/collectors/collectors.py",
+        "../rl/torchrl/collectors/utils.py"
     ]
 }

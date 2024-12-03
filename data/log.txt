@@ -1,0 +1,2714 @@
+2024-12-01 20:26:10
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-01 20:26:38
+[
+    {
+        "arg": "dictionary",
+        "description": "(OrderedDict) \u2013 The input dictionary to be mapped to CPU. (default: None)"
+    },
+    {
+        "arg": "return_dict",
+        "description": "(bool) \u2013 Whether to return the results in a new OrderedDict or not. (default: False)"
+    }
+]
+2024-12-01 20:27:00
+class DataCollectorBase description: 
+[blue]This class is a base class for data collectors in PyTorch, providing a common interface for updating model weights and other state during training or testing. It allows for flexible customization of the data collection process through its methods, such as `update_policy_weights_` and `set_seed`, making it a crucial component in building robust and efficient machine learning pipelines.[/blue]
+2024-12-01 20:27:27
+function update_policy_weights_ description: 
+[blue]This function is used to update the weights of a policy in PyTorch, ensuring consistency across devices when using data collectors and trained policies.[/blue]
+2024-12-01 20:27:52
+[
+    {
+        "arg": "policy_weights",
+        "description": " (Optional[TensorDictBase]) \u2013 The policy weights to be updated. (default: None)"
+    }
+]
+2024-12-01 20:28:09
+function next description: 
+[blue]This function is used to retrieve the next item from an iterator, handling cases where the iterator has reached its end.[/blue]
+2024-12-01 20:28:30
+[
+    {
+        "arg": "self",
+        "description": "(DataCollectorBase instance) \u2013 The current data collector instance. (default: None)"
+    }
+]
+2024-12-01 20:28:45
+function shutdown description: 
+[blue]This function is an abstract method that serves as a hook for customizing the shutdown process of a PyTorch module, allowing developers to implement specific cleanup actions before the module is unloaded.[/blue]
+2024-12-01 20:29:07
+[
+    {
+        "arg": "self",
+        "description": "(DataCollectorBase) \u2013 The instance of DataCollectorBase class. (default: None)"
+    }
+]
+2024-12-01 20:29:21
+function iterator description: 
+[blue]This function is an abstract base class method that defines the interface for creating an iterator over a TensorDict, allowing for iteration over its key-value pairs or values.[/blue]
+2024-12-01 20:30:04
+[
+    {
+        "arg": "self",
+        "description": "(self) \u2013 The instance of DataCollectorBase class. (default: None)"
+    },
+    {
+        "arg": "T",
+        "type": "TypeVar",
+        "description": "(T) \u2013 Type variable for the data type stored in TensorDictBase."
+    },
+    {
+        "arg": "TensorDictBase",
+        "type": "class",
+        "description": "(TensorDictBase) \u2013 The base class of the dictionary containing tensors."
+    },
+    {
+        "arg": "Iterator[TensorDictBase]",
+        "type": "function return type",
+        "description": "(Iterator[TensorDictBase]) \u2013 An iterator over TensorDictBase instances."
+    }
+]
+2024-12-01 20:30:21
+function set_seed description: 
+[blue]This function is used to set a random seed for reproducibility in PyTorch models, ensuring that the same sequence of random numbers is generated during training and testing, thereby facilitating reliable comparisons and debugging.[/blue]
+2024-12-01 20:30:49
+[
+    {
+        "arg": "seed",
+        "description": " (int) \u2013 The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) \u2013 Whether the static seed should be used. (default: False)"
+    }
+]
+2024-12-01 20:31:03
+function state_dict description: 
+[blue]This function is used to serialize and retrieve the model's weights and biases into a dictionary, allowing for easy saving and loading of the model's state.[/blue]
+2024-12-01 20:31:31
+[
+    {
+        "arg": "self",
+        "description": "(DataCollectorBase instance) \u2013 The DataCollectorBase instance to retrieve the state dictionary from. (default: None)"
+    },
+    {
+        "arg": "OrderedDict",
+        "description": " \u2013 The ordered dictionary containing the model's state. (default: None)"
+    }
+]
+2024-12-01 20:31:46
+function load_state_dict description: 
+[blue]This function is used to load the state dictionary of a PyTorch model from a given state dictionary, allowing for model checkpointing and resuming training from a saved state.[/blue]
+2024-12-01 20:32:16
+[
+    {
+        "arg": "self",
+        "description": "(None) \u2013 The instance of DataCollectorBase to update with the new state dictionary. (default: None)"
+    },
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) \u2013 The state dictionary to load into the model. (default: None)"
+    }
+]
+2024-12-01 20:32:32
+class SyncDataCollector description: 
+[blue]This class is a data collector used to synchronize and collect data from multiple workers in a distributed training setup, ensuring consistency across the model's parameters.[/blue]
+2024-12-01 20:39:18
+function __init__ description: 
+[blue]This function is the constructor for a class that initializes various attributes and settings for an environment, policy, and rollout. It takes in numerous keyword arguments to customize its behavior, including batch size, frames per batch, total frames, exploration type, and more. The class appears to be designed for reinforcement learning tasks, particularly those involving batched environments and policies.[/blue]
+2024-12-01 20:43:27
+[
+    {
+        "arg": "create_env_fn",
+        "description": "(Union[EnvBase, 'EnvCreator', Sequence[Callable[[], EnvBase]]]) \u2013 Function to create environment. (default: None)"
+    },
+    {
+        "arg": "policy",
+        "description": "(Optional[Union[TensorDictModule, Callable[[TensorDictBase], TensorDictBase]]]) \u2013 Policy function or module. (default: None)"
+    },
+    {
+        "arg": "frames_per_batch",
+        "description": "(int) \u2013 Number of frames per batch. (default: -1)"
+    },
+    {
+        "arg": "total_frames",
+        "description": "(int) \u2013 Total number of frames. (default: -1)"
+    },
+    {
+        "arg": "device",
+        "description": "(DEVICE_TYPING) \u2013 Device to use for computation. (default: None)"
+    },
+    {
+        "arg": "storing_device",
+        "description": "(DEVICE_TYPING) \u2013 Device to store data on. (default: None)"
+    },
+    {
+        "arg": "policy_device",
+        "description": "(DEVICE_TYPING) \u2013 Device for policy computation. (default: None)"
+    },
+    {
+        "arg": "env_device",
+        "description": "(DEVICE_TYPING) \u2013 Device for environment computation. (default: None)"
+    },
+    {
+        "arg": "create_env_kwargs",
+        "description": "(dict | None) \u2013 Keyword arguments to pass to create_env_fn. (default: None)"
+    },
+    {
+        "arg": "max_frames_per_traj",
+        "description": "(int | None) \u2013 Maximum number of frames per trajectory. (default: None)"
+    },
+    {
+        "arg": "init_random_frames",
+        "description": "(int | None) \u2013 Number of random frames to initialize with. (default: None)"
+    },
+    {
+        "arg": "reset_at_each_iter",
+        "description": "(bool) \u2013 Whether to reset at each iteration. (default: False)"
+    },
+    {
+        "arg": "postproc",
+        "description": "(Callable[[TensorDictBase], TensorDictBase] | None) \u2013 Post-processing function for tensor dict. (default: None)"
+    },
+    {
+        "arg": "split_trajs",
+        "description": "(bool | None) \u2013 Whether to split trajectories. (default: None)"
+    },
+    {
+        "arg": "exploration_type",
+        "description": "(ExplorationType) \u2013 Type of exploration. (default: DEFAULT_EXPLORATION_TYPE)"
+    },
+    {
+        "arg": "return_same_td",
+        "description": "(bool) \u2013 Whether to return same td. (default: False)"
+    },
+    {
+        "arg": "reset_when_done",
+        "description": "(bool) \u2013 Whether to reset when done. (default: True)"
+    },
+    {
+        "arg": "interruptor",
+        "description": "(None) \u2013 Interruptor object."
+    },
+    {
+        "arg": "set_truncated",
+        "description": "(bool) \u2013 Whether to set truncated. (default: False)"
+    },
+    {
+        "arg": "use_buffers",
+        "description": "(bool | None) \u2013 Whether to use buffers. (default: None)"
+    },
+    {
+        "arg": "replay_buffer",
+        "description": "(ReplayBuffer | None) \u2013 Replay buffer object."
+    },
+    {
+        "arg": "trust_policy",
+        "description": "(None) \u2013 Trust policy flag."
+    },
+    {
+        "arg": "compile_policy",
+        "description": "(Dict[str, Any] | bool | None) \u2013 Compile policy flag or dictionary. (default: None)"
+    },
+    {
+        "arg": "cudagraph_policy",
+        "description": "(Dict[str, Any] | bool | None) \u2013 Cuda graph policy flag or dictionary. (default: None)"
+    }
+]
+2024-12-01 20:43:43
+function next description: 
+[blue]This function is a placeholder that delegates to the parent class's `next` method, effectively bypassing any custom implementation. It should be used when you want to maintain the default behavior of the parent class while still providing a consistent interface for subclasses.[/blue]
+2024-12-01 20:44:06
+[
+    {
+        "arg": "self",
+        "description": "(torchvision.utils.data.Dataloader) \u2013 The data loader to get the next batch from. (default: None)"
+    }
+]
+2024-12-01 20:44:22
+function update_policy_weights_ description: 
+[blue]This function is a method that updates the weights of a policy in a reinforcement learning model by calling the parent class's `update_policy_weights_` method.[/blue]
+2024-12-01 20:44:52
+[
+    {
+        "arg": "policy_weights",
+        "description": " (Optional[TensorDictBase]) \u2013 The policy weights to be updated. (default: None)"
+    },
+    {
+        "arg": "self",
+        "description": " (<class 'SyncDataCollector'>) \u2013 The instance of SyncDataCollector"
+    }
+]
+2024-12-01 20:45:42
+function set_seed description: 
+[blue]This function is used to set the seeds for environments in a DataCollector, allowing for reproducibility and incrementing of seeds across multiple environments.[/blue]
+2024-12-01 20:46:09
+[
+    {
+        "arg": "seed",
+        "description": " (int) \u2013 The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) \u2013 Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-01 20:47:40
+function iterator description: 
+[blue]This function is used to iterate through a DataCollector, yielding TensorDictBase objects containing chunks of trajectories. It manages CUDA streams and events for efficient data collection on GPU devices.[/blue]
+2024-12-01 20:48:14
+[
+    {
+        "arg": "self",
+        "description": "(Iterator[TensorDictBase]) \u2013 The data collector instance. (default: None)"
+    },
+    {
+        "arg": "T",
+        "description": "(type) \u2013 The type of the data to be collected. (default: None)"
+    },
+    {
+        "arg": "D",
+        "description": "(type) \u2013 The type of the dictionary in the TensorDictBase. (default: dict)"
+    }
+]
+2024-12-01 20:50:46
+function rollout description: 
+[blue]This function is used to generate a rollout in the environment using the provided policy. It returns a TensorDictBase containing the computed rollout and can be used for training reinforcement learning agents by sampling multiple rollouts from the same policy and averaging their outputs.[/blue]
+2024-12-01 20:51:24
+[
+    {
+        "arg": "num_steps",
+        "description": "(int) \u2013 Number of steps to roll out. (default: 1)"
+    },
+    {
+        "arg": "batch_size",
+        "description": "(int) \u2013 Batch size for rollout. (default: 1)"
+    },
+    {
+        "arg": "device",
+        "description": "(torch.device or str) \u2013 Device to run the rollout on. (default: None)"
+    },
+    {
+        "arg": "deterministic",
+        "description": "(bool) \u2013 Whether to use deterministic rollout. (default: False)"
+    }
+]
+2024-12-01 20:52:02
+function reset description: 
+[blue]This function is used to reset environments in a PyTorch environment, updating the internal state and metadata accordingly.[/blue]
+2024-12-01 20:52:33
+[
+    {
+        "arg": "self",
+        "description": "(NoneType) \u2013 The instance of SyncDataCollector class. (default: None)"
+    },
+    {
+        "arg": "index",
+        "description": "(int or NoneType) \u2013 The index to reset the data collector for. If None, resets all data collectors. (default: None)"
+    }
+]
+2024-12-01 20:52:53
+function shutdown description: 
+[blue]This function is used to cleanly shut down a PyTorch environment, releasing system resources and ensuring proper cleanup.[/blue]
+2024-12-01 20:53:16
+[
+    {
+        "arg": "self",
+        "description": "(NoneType) \u2013 The instance of SyncDataCollector class. (default: None)"
+    }
+]
+2024-12-01 20:53:58
+function state_dict description: 
+[blue]This function is used to retrieve and combine the local state dictionaries of an environment and a policy in PyTorch RL. It returns an ordered dictionary containing both environment and policy state dictionaries, along with additional metadata such as frames and iteration number.[/blue]
+2024-12-01 20:54:27
+[
+    {
+        "arg": "self",
+        "description": "(None) \u2013 The instance of SyncDataCollector class. (default: None)"
+    },
+    {
+        "arg": "OrderedDict",
+        "description": "(<type>) \u2013 A dictionary-like object used to store the model's state. (default: None)"
+    }
+]
+2024-12-01 20:54:58
+function load_state_dict description: 
+[blue]This function is used to load a pre-trained model's state dictionary into the environment and policy, allowing for the resumption of training or inference from a previously saved checkpoint.[/blue]
+2024-12-01 20:55:29
+[
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) \u2013 The dictionary containing the model's state. (default: None)"
+    },
+    {
+        "arg": "kwargs",
+        "description": "(**kwargs) \u2013 Additional keyword arguments to be passed to the underlying PyTorch function. (default: None)"
+    }
+]
+2024-12-01 20:55:45
+class MultiSyncDataCollector description: 
+[blue]This class is a PyTorch data collector that synchronizes and batches data across multiple workers, ensuring consistent data distribution for training and evaluation.[/blue]
+2024-12-01 20:56:01
+function next description: 
+[blue]This function is a placeholder that delegates to the parent class's `next` method, effectively bypassing any custom implementation. It should be used when you want to maintain the default behavior of the parent class while still providing a consistent interface for subclasses.[/blue]
+2024-12-01 20:56:31
+[
+    {
+        "arg": "self",
+        "description": "(MultiSyncDataCollector instance) \u2013 The current data collector instance. (default: None)"
+    },
+    {
+        "arg": "data",
+        "description": "(list of dict) \u2013 A list of dictionaries containing the data to be collected. Each dictionary should have 'key' and 'value' keys."
+    }
+]
+2024-12-01 20:56:48
+function shutdown description: 
+[blue]This function is used to release resources held by a PyTorch model during shutdown, ensuring memory safety and preventing potential memory leaks.[/blue]
+2024-12-01 20:57:09
+[
+    {
+        "arg": "self",
+        "description": "(None) \u2013 The instance of MultiSyncDataCollector. (default: None)"
+    }
+]
+2024-12-01 20:57:28
+function set_seed description: 
+[blue]This function is used to set a random seed for reproducibility in PyTorch models. It ensures that the same sequence of random numbers is generated every time the model is run with the same seed value, making it easier to debug and test models.[/blue]
+2024-12-01 20:57:58
+[
+    {
+        "arg": "seed",
+        "description": " (int) \u2013 The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) \u2013 Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-01 20:58:12
+function state_dict description: 
+[blue]This function is used to retrieve the model's state dictionary, which contains the learned parameters and their values, allowing for model loading and saving.[/blue]
+2024-12-01 20:58:45
+[
+    {
+        "arg": "self",
+        "description": "(torchvision.utils.data.DataloaderIterator) \u2013 The data iterator to synchronize with. (default: None)"
+    },
+    {
+        "arg": "prefix",
+        "description": "(str) \u2013 Prefix for the keys in the state dictionary. (default: 'data')"
+    },
+    {
+        "arg": "local_rank",
+        "description": "(int) \u2013 Local rank of this process. (default: 0)"
+    }
+]
+2024-12-01 20:59:03
+function load_state_dict description: 
+[blue]This function is used to load the state dictionary of a PyTorch model from an existing checkpoint or saved model. It allows for the transfer of learned parameters and other model state between different runs or environments, enabling faster development and deployment.[/blue]
+2024-12-01 20:59:35
+[
+    {
+        "arg": "self",
+        "description": "(None) \u2013 The instance of MultiSyncDataCollector. (default: None)"
+    },
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) \u2013 The model state dictionary to be loaded into the current state."
+    },
+    {
+        "arg": "None",
+        "description": "(None) \u2013 Not used in this function."
+    }
+]
+2024-12-01 20:59:52
+function update_policy_weights_ description: 
+[blue]This function is a method that updates the weights of a policy in a reinforcement learning model by calling the parent class's `update_policy_weights_` method.[/blue]
+2024-12-01 21:00:24
+[
+    {
+        "arg": "policy_weights",
+        "description": " (Optional[TensorDictBase]) \u2013 The policy weights to be updated. (default: None)"
+    },
+    {
+        "arg": "self",
+        "description": " (<class 'MultiSyncDataCollector'>) \u2013 The instance of the class."
+    }
+]
+2024-12-01 21:00:53
+function frames_per_batch_worker description: 
+[blue]This function is used to calculate the effective `frames_per_batch` value for a batch of frames when using multiple collector workers, ensuring that the requested FPS is achieved despite the increased number of frames per iteration.[/blue]
+2024-12-01 21:01:17
+[
+    {
+        "arg": "frames_per_batch_worker",
+        "description": "(int) \u2013 The number of frames to process in each batch. (default: 1)"
+    }
+]
+2024-12-01 21:04:56
+function iterator description: 
+[blue]This function is a PyTorch iterator that generates batches of data from a collection of buffers, applying various transformations and filtering criteria along the way. It's used to process and combine data from multiple workers in a distributed environment, yielding a batched output for further processing or training.[/blue]
+2024-12-01 21:05:59
+[
+    {
+        "arg": "self",
+        "description": "(Iterator[TensorDictBase]) \u2013 The data collector instance. (default: None)"
+    },
+    {
+        "arg": "T",
+        "description": "(type) \u2013 The type of the data to be collected."
+    },
+    {
+        "arg": "data",
+        "description": "(list[dict[str, Tensor]]) \u2013 A list of dictionaries containing the data to be collected."
+    },
+    {
+        "arg": "batch_size",
+        "description": "(int) \u2013 The batch size. (default: 1)"
+    },
+    {
+        "arg": "shuffle",
+        "description": "(bool) \u2013 Whether to shuffle the data. (default: False)"
+    },
+    {
+        "arg": "drop_last",
+        "description": "(bool) \u2013 Whether to drop the last incomplete batch. (default: True)"
+    },
+    {
+        "arg": "num_workers",
+        "description": "(int) \u2013 The number of worker threads. (default: 0)"
+    },
+    {
+        "arg": "pin_memory",
+        "description": "(bool) \u2013 Whether to pin the memory allocation for each tensor. (default: False)"
+    }
+]
+2024-12-01 21:06:17
+class MultiaSyncDataCollector description: 
+[blue]This class is a data collector for multi-agent environments, designed to collect and store experiences from multiple agents in parallel, allowing for efficient training of multi-agent reinforcement learning models.[/blue]
+2024-12-01 21:06:48
+function __init__ description: 
+[blue]This function is a special method in PyTorch classes that initializes the object's attributes when an instance of the class is created. It should be used to set up the initial state of the object, including any necessary computations or data structures, and is typically called automatically when an instance of the class is created.[/blue]
+2024-12-01 21:07:16
+[
+    {
+        "arg": "*args",
+        "description": "(tuple) \u2013 Variable length argument list. (default: None)"
+    },
+    {
+        "arg": "**kwargs",
+        "description": "(dict) \u2013 Arbitrary keyword arguments. (default: None)"
+    }
+]
+2024-12-01 21:07:32
+function next description: 
+[blue]This function is a placeholder that delegates to the parent class's `next` method, effectively bypassing any custom implementation. It should be used when you want to maintain the default behavior of the parent class while still providing a consistent interface for subclasses.[/blue]
+2024-12-01 21:08:02
+[
+    {
+        "arg": "self",
+        "description": "(MultiaSyncDataCollector) \u2013 The instance of MultiaSyncDataCollector class. (default: None)"
+    },
+    {
+        "arg": "data",
+        "description": "(list or tuple) \u2013 A list or tuple containing the data to be collected. (default: None)"
+    }
+]
+2024-12-01 21:08:18
+function shutdown description: 
+[blue]This function is used to clean up resources and finalize the shutdown of a PyTorch model or module instance before calling its parent class's `shutdown` method.[/blue]
+2024-12-01 21:08:41
+[
+    {
+        "arg": "self",
+        "description": "(None) \u2013 The instance of MultiaSyncDataCollector. (default: None)"
+    }
+]
+2024-12-01 21:09:01
+function set_seed description: 
+[blue]This function is used to set a random seed for reproducibility in PyTorch models. It ensures that the same sequence of random numbers is generated every time the model is run with the same seed value, making it easier to debug and test models.[/blue]
+2024-12-01 21:09:30
+[
+    {
+        "arg": "seed",
+        "description": " (int) \u2013 The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) \u2013 Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-01 21:09:43
+function state_dict description: 
+[blue]This function is used to retrieve the model's state dictionary, which contains the learned parameters and their values, allowing for model loading and saving.[/blue]
+2024-12-01 21:10:12
+[
+    {
+        "arg": "self",
+        "description": "(torchvision.utils.data.DataloaderIterator) \u2013 The data iterator to retrieve the state dictionary from. (default: None)"
+    },
+    {
+        "arg": "OrderedDict",
+        "description": "\u2013 The ordered dictionary containing the model's state. (default: None)"
+    }
+]
+2024-12-01 21:10:30
+function load_state_dict description: 
+[blue]This function is used to load the state dictionary of a PyTorch model from an existing checkpoint or saved model. It allows for the transfer of learned parameters and other model state between different runs or environments, enabling faster development and deployment.[/blue]
+2024-12-01 21:11:07
+[
+    {
+        "arg": "self",
+        "description": "(None) \u2013 The instance of MultiaSyncDataCollector. (default: None)"
+    },
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) \u2013 The model state dictionary to load into the current state, populating all and making no changes to it."
+    },
+    {
+        "arg": "None",
+        "description": "(None) \u2013 Not used in this function. (default: None)"
+    }
+]
+2024-12-01 21:11:24
+function update_policy_weights_ description: 
+[blue]This function is a method that updates the weights of a policy in a reinforcement learning model by calling the parent class's `update_policy_weights_` method.[/blue]
+2024-12-01 21:11:55
+[
+    {
+        "arg": "policy_weights",
+        "description": " (Optional[TensorDictBase]) \u2013 The policy weights to be updated. (default: None)"
+    },
+    {
+        "arg": "self",
+        "description": " (<class 'MultiaSyncDataCollector'>) \u2013 The instance of the class."
+    }
+]
+2024-12-01 21:12:10
+function frames_per_batch_worker description: 
+[blue]This function is a read-only property that returns the requested frames per batch, indicating its significance as a configuration setting for video processing and batching in PyTorch.[/blue]
+2024-12-01 21:12:35
+[
+    {
+        "arg": "frames_per_batch_worker",
+        "description": "(int) \u2013 The number of frames to process in each batch. (default: 1)"
+    }
+]
+2024-12-01 21:13:36
+function iterator description: 
+[blue]This function is a PyTorch iterator that manages the data processing pipeline, handling tasks such as updating policy weights, sending messages to workers, and yielding processed output tensors.[/blue]
+2024-12-01 21:14:31
+[
+    {
+        "arg": "self",
+        "description": "(Iterator[TensorDictBase]) \u2013 The data collector instance. (default: None)"
+    },
+    {
+        "arg": "T",
+        "description": "(type) \u2013 The type of the data to be collected. (default: None)"
+    },
+    {
+        "arg": "batch_size",
+        "description": "(int) \u2013 The batch size for collecting data. (default: 1)"
+    },
+    {
+        "arg": "shuffle",
+        "description": "(bool) \u2013 Whether to shuffle the data before collecting it. (default: False)"
+    },
+    {
+        "arg": "drop_last",
+        "description": "(bool) \u2013 Whether to drop the last batch if its size is less than the batch size. (default: True)"
+    },
+    {
+        "arg": "pin_memory",
+        "description": "(bool) \u2013 Whether to pin the data in memory. (default: False)"
+    }
+]
+2024-12-01 21:15:00
+function reset description: 
+[blue]This function is used to reset the state of a worker in a multi-worker queue system, ensuring that workers continue processing tasks after a certain period or when new frames are available.[/blue]
+2024-12-01 21:15:33
+[
+    {
+        "arg": "reset_idx",
+        "description": " (Optional[Sequence[bool]]) \u2013 Indexes of data to be reset. (default: None)"
+    },
+    {
+        "arg": "self",
+        "description": " \u2013 The instance of MultiaSyncDataCollector."
+    },
+    {
+        "arg": "reset",
+        "description": " () -> None"
+    }
+]
+2024-12-01 21:15:48
+class aSyncDataCollector description: 
+[blue]This class is an asynchronous data collector, designed to efficiently collect and store data from various sources in a PyTorch environment, allowing for seamless integration with other components.[/blue]
+2024-12-01 21:17:04
+function __init__ description: 
+[blue]This function is the constructor of a class in PyTorch, used to initialize an object with its attributes and parameters. It sets up the environment for training or testing a reinforcement learning algorithm.[/blue]
+2024-12-01 21:48:20
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-01 21:48:48
+[
+    {
+        "arg": "dictionary",
+        "description": "(OrderedDict) \u2013 The input dictionary to be mapped to CPU. (default: None)"
+    },
+    {
+        "arg": "return_dict",
+        "description": "(bool) \u2013 Whether to return the results in a new OrderedDict or not. (default: False)"
+    }
+]
+2024-12-01 21:49:11
+class DataCollectorBase description: 
+[blue]This class is a base class for data collectors in PyTorch, providing a common interface for updating model weights and other state during training or testing. It allows for flexible customization of the data collection process through its methods, such as `update_policy_weights_` and `set_seed`, making it a crucial component in building robust and efficient machine learning pipelines.[/blue]
+2024-12-01 21:49:36
+function update_policy_weights_ description: 
+[blue]This function is used to update the weights of a policy in PyTorch, ensuring consistency across devices when using data collectors and trained policies.[/blue]
+2024-12-01 21:50:00
+[
+    {
+        "arg": "policy_weights",
+        "description": " (Optional[TensorDictBase]) \u2013 The policy weights to be updated. (default: None)"
+    }
+]
+2024-12-01 21:50:17
+function next description: 
+[blue]This function is used to retrieve the next item from an iterator, handling cases where the iterator has reached its end.[/blue]
+2024-12-01 21:50:38
+[
+    {
+        "arg": "self",
+        "description": "(DataCollectorBase instance) \u2013 The current data collector instance. (default: None)"
+    }
+]
+2024-12-01 21:50:52
+function shutdown description: 
+[blue]This function is an abstract method that serves as a hook for customizing the shutdown process of a PyTorch module, allowing developers to implement specific cleanup actions before the module is unloaded.[/blue]
+2024-12-01 21:51:14
+[
+    {
+        "arg": "self",
+        "description": "(DataCollectorBase) \u2013 The instance of DataCollectorBase class. (default: None)"
+    }
+]
+2024-12-01 21:51:28
+function iterator description: 
+[blue]This function is an abstract base class method that defines the interface for creating an iterator over a TensorDict, allowing for iteration over its key-value pairs or values.[/blue]
+2024-12-01 21:52:11
+[
+    {
+        "arg": "self",
+        "description": "(self) \u2013 The instance of DataCollectorBase class. (default: None)"
+    },
+    {
+        "arg": "T",
+        "type": "TypeVar",
+        "description": "(T) \u2013 Type variable for the data type stored in TensorDictBase."
+    },
+    {
+        "arg": "TensorDictBase",
+        "type": "class",
+        "description": "(TensorDictBase) \u2013 The base class of the dictionary containing tensors."
+    },
+    {
+        "arg": "Iterator[TensorDictBase]",
+        "type": "function return type",
+        "description": "(Iterator[TensorDictBase]) \u2013 An iterator over TensorDictBase instances."
+    }
+]
+2024-12-01 21:52:27
+function set_seed description: 
+[blue]This function is used to set a random seed for reproducibility in PyTorch models, ensuring that the same sequence of random numbers is generated during training and testing, thereby facilitating reliable comparisons and debugging.[/blue]
+2024-12-01 21:52:56
+[
+    {
+        "arg": "seed",
+        "description": " (int) \u2013 The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) \u2013 Whether the static seed should be used. (default: False)"
+    }
+]
+2024-12-01 21:53:10
+function state_dict description: 
+[blue]This function is used to serialize and retrieve the model's weights and biases into a dictionary, allowing for easy saving and loading of the model's state.[/blue]
+2024-12-01 21:53:38
+[
+    {
+        "arg": "self",
+        "description": "(DataCollectorBase instance) \u2013 The DataCollectorBase instance to retrieve the state dictionary from. (default: None)"
+    },
+    {
+        "arg": "OrderedDict",
+        "description": " \u2013 The ordered dictionary containing the model's state. (default: None)"
+    }
+]
+2024-12-01 21:53:53
+function load_state_dict description: 
+[blue]This function is used to load the state dictionary of a PyTorch model from a given state dictionary, allowing for model checkpointing and resuming training from a saved state.[/blue]
+2024-12-01 21:54:22
+[
+    {
+        "arg": "self",
+        "description": "(None) \u2013 The instance of DataCollectorBase to update with the new state dictionary. (default: None)"
+    },
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) \u2013 The state dictionary to load into the model. (default: None)"
+    }
+]
+2024-12-01 21:54:38
+class SyncDataCollector description: 
+[blue]This class is a data collector used to synchronize and collect data from multiple workers in a distributed training setup, ensuring consistency across the model's parameters.[/blue]
+2024-12-01 22:01:21
+function __init__ description: 
+[blue]This function is the constructor for a class that initializes various attributes and settings for an environment, policy, and rollout. It takes in numerous keyword arguments to customize its behavior, including batch size, frames per batch, total frames, exploration type, and more. The class appears to be designed for reinforcement learning tasks, particularly those involving batched environments and policies.[/blue]
+2024-12-01 22:05:27
+[
+    {
+        "arg": "create_env_fn",
+        "description": "(Union[EnvBase, 'EnvCreator', Sequence[Callable[[], EnvBase]]]) \u2013 Function to create environment. (default: None)"
+    },
+    {
+        "arg": "policy",
+        "description": "(Optional[Union[TensorDictModule, Callable[[TensorDictBase], TensorDictBase]]]) \u2013 Policy function or module. (default: None)"
+    },
+    {
+        "arg": "frames_per_batch",
+        "description": "(int) \u2013 Number of frames per batch. (default: -1)"
+    },
+    {
+        "arg": "total_frames",
+        "description": "(int) \u2013 Total number of frames. (default: -1)"
+    },
+    {
+        "arg": "device",
+        "description": "(DEVICE_TYPING) \u2013 Device to use for computation. (default: None)"
+    },
+    {
+        "arg": "storing_device",
+        "description": "(DEVICE_TYPING) \u2013 Device to store data on. (default: None)"
+    },
+    {
+        "arg": "policy_device",
+        "description": "(DEVICE_TYPING) \u2013 Device for policy computation. (default: None)"
+    },
+    {
+        "arg": "env_device",
+        "description": "(DEVICE_TYPING) \u2013 Device for environment computation. (default: None)"
+    },
+    {
+        "arg": "create_env_kwargs",
+        "description": "(dict | None) \u2013 Keyword arguments to pass to create_env_fn. (default: None)"
+    },
+    {
+        "arg": "max_frames_per_traj",
+        "description": "(int | None) \u2013 Maximum number of frames per trajectory. (default: None)"
+    },
+    {
+        "arg": "init_random_frames",
+        "description": "(int | None) \u2013 Number of random frames to initialize with. (default: None)"
+    },
+    {
+        "arg": "reset_at_each_iter",
+        "description": "(bool) \u2013 Whether to reset at each iteration. (default: False)"
+    },
+    {
+        "arg": "postproc",
+        "description": "(Callable[[TensorDictBase], TensorDictBase] | None) \u2013 Post-processing function for tensor dict. (default: None)"
+    },
+    {
+        "arg": "split_trajs",
+        "description": "(bool | None) \u2013 Whether to split trajectories. (default: None)"
+    },
+    {
+        "arg": "exploration_type",
+        "description": "(ExplorationType) \u2013 Type of exploration. (default: DEFAULT_EXPLORATION_TYPE)"
+    },
+    {
+        "arg": "return_same_td",
+        "description": "(bool) \u2013 Whether to return same td. (default: False)"
+    },
+    {
+        "arg": "reset_when_done",
+        "description": "(bool) \u2013 Whether to reset when done. (default: True)"
+    },
+    {
+        "arg": "interruptor",
+        "description": "(None) \u2013 Interruptor object."
+    },
+    {
+        "arg": "set_truncated",
+        "description": "(bool) \u2013 Whether to set truncated. (default: False)"
+    },
+    {
+        "arg": "use_buffers",
+        "description": "(bool | None) \u2013 Whether to use buffers. (default: None)"
+    },
+    {
+        "arg": "replay_buffer",
+        "description": "(ReplayBuffer | None) \u2013 Replay buffer object."
+    },
+    {
+        "arg": "trust_policy",
+        "description": "(None) \u2013 Trust policy flag."
+    },
+    {
+        "arg": "compile_policy",
+        "description": "(Dict[str, Any] | bool | None) \u2013 Compile policy flag or dictionary. (default: None)"
+    },
+    {
+        "arg": "cudagraph_policy",
+        "description": "(Dict[str, Any] | bool | None) \u2013 Cuda graph policy flag or dictionary. (default: None)"
+    }
+]
+2024-12-01 22:05:43
+function next description: 
+[blue]This function is a placeholder that delegates to the parent class's `next` method, effectively bypassing any custom implementation. It should be used when you want to maintain the default behavior of the parent class while still providing a consistent interface for subclasses.[/blue]
+2024-12-01 22:06:06
+[
+    {
+        "arg": "self",
+        "description": "(torchvision.utils.data.Dataloader) \u2013 The data loader to get the next batch from. (default: None)"
+    }
+]
+2024-12-01 22:06:22
+function update_policy_weights_ description: 
+[blue]This function is a method that updates the weights of a policy in a reinforcement learning model by calling the parent class's `update_policy_weights_` method.[/blue]
+2024-12-01 22:06:51
+[
+    {
+        "arg": "policy_weights",
+        "description": " (Optional[TensorDictBase]) \u2013 The policy weights to be updated. (default: None)"
+    },
+    {
+        "arg": "self",
+        "description": " (<class 'SyncDataCollector'>) \u2013 The instance of SyncDataCollector"
+    }
+]
+2024-12-01 22:07:40
+function set_seed description: 
+[blue]This function is used to set the seeds for environments in a DataCollector, allowing for reproducibility and incrementing of seeds across multiple environments.[/blue]
+2024-12-01 22:08:09
+[
+    {
+        "arg": "seed",
+        "description": " (int) \u2013 The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) \u2013 Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-01 22:09:39
+function iterator description: 
+[blue]This function is used to iterate through a DataCollector, yielding TensorDictBase objects containing chunks of trajectories. It manages CUDA streams and events for efficient data collection on GPU devices.[/blue]
+2024-12-01 22:10:12
+[
+    {
+        "arg": "self",
+        "description": "(Iterator[TensorDictBase]) \u2013 The data collector instance. (default: None)"
+    },
+    {
+        "arg": "T",
+        "description": "(type) \u2013 The type of the data to be collected. (default: None)"
+    },
+    {
+        "arg": "D",
+        "description": "(type) \u2013 The type of the dictionary in the TensorDictBase. (default: dict)"
+    }
+]
+2024-12-01 22:12:30
+function rollout description: 
+[blue]This function is used to generate a rollout in the environment using the provided policy. It returns a TensorDictBase containing the computed rollout and can be used for training reinforcement learning agents by sampling multiple rollouts from the same policy and averaging their outputs.[/blue]
+2024-12-01 22:13:07
+[
+    {
+        "arg": "num_steps",
+        "description": "(int) \u2013 Number of steps to roll out. (default: 1)"
+    },
+    {
+        "arg": "batch_size",
+        "description": "(int) \u2013 Batch size for rollout. (default: 1)"
+    },
+    {
+        "arg": "device",
+        "description": "(torch.device or str) \u2013 Device to run the rollout on. (default: None)"
+    },
+    {
+        "arg": "deterministic",
+        "description": "(bool) \u2013 Whether to use deterministic rollout. (default: False)"
+    }
+]
+2024-12-01 22:13:42
+function reset description: 
+[blue]This function is used to reset environments in a PyTorch environment, updating the internal state and metadata accordingly.[/blue]
+2024-12-01 22:14:11
+[
+    {
+        "arg": "self",
+        "description": "(NoneType) \u2013 The instance of SyncDataCollector class. (default: None)"
+    },
+    {
+        "arg": "index",
+        "description": "(int or NoneType) \u2013 The index to reset the data collector for. If None, resets all data collectors. (default: None)"
+    }
+]
+2024-12-01 22:14:30
+function shutdown description: 
+[blue]This function is used to cleanly shut down a PyTorch environment, releasing system resources and ensuring proper cleanup.[/blue]
+2024-12-01 22:14:50
+[
+    {
+        "arg": "self",
+        "description": "(NoneType) \u2013 The instance of SyncDataCollector class. (default: None)"
+    }
+]
+2024-12-01 22:15:28
+function state_dict description: 
+[blue]This function is used to retrieve and combine the local state dictionaries of an environment and a policy in PyTorch RL. It returns an ordered dictionary containing both environment and policy state dictionaries, along with additional metadata such as frames and iteration number.[/blue]
+2024-12-01 22:15:55
+[
+    {
+        "arg": "self",
+        "description": "(None) \u2013 The instance of SyncDataCollector class. (default: None)"
+    },
+    {
+        "arg": "OrderedDict",
+        "description": "(<type>) \u2013 A dictionary-like object used to store the model's state. (default: None)"
+    }
+]
+2024-12-01 22:16:25
+function load_state_dict description: 
+[blue]This function is used to load a pre-trained model's state dictionary into the environment and policy, allowing for the resumption of training or inference from a previously saved checkpoint.[/blue]
+2024-12-01 22:16:52
+[
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) \u2013 The dictionary containing the model's state. (default: None)"
+    },
+    {
+        "arg": "kwargs",
+        "description": "(**kwargs) \u2013 Additional keyword arguments to be passed to the underlying PyTorch function. (default: None)"
+    }
+]
+2024-12-01 22:17:07
+class MultiSyncDataCollector description: 
+[blue]This class is a PyTorch data collector that synchronizes and batches data across multiple workers, ensuring consistent data distribution for training and evaluation.[/blue]
+2024-12-01 22:17:21
+function next description: 
+[blue]This function is a placeholder that delegates to the parent class's `next` method, effectively bypassing any custom implementation. It should be used when you want to maintain the default behavior of the parent class while still providing a consistent interface for subclasses.[/blue]
+2024-12-01 22:17:50
+[
+    {
+        "arg": "self",
+        "description": "(MultiSyncDataCollector instance) \u2013 The current data collector instance. (default: None)"
+    },
+    {
+        "arg": "data",
+        "description": "(list of dict) \u2013 A list of dictionaries containing the data to be collected. Each dictionary should have 'key' and 'value' keys."
+    }
+]
+2024-12-01 22:18:05
+function shutdown description: 
+[blue]This function is used to release resources held by a PyTorch model during shutdown, ensuring memory safety and preventing potential memory leaks.[/blue]
+2024-12-01 22:18:25
+[
+    {
+        "arg": "self",
+        "description": "(None) \u2013 The instance of MultiSyncDataCollector. (default: None)"
+    }
+]
+2024-12-01 22:18:43
+function set_seed description: 
+[blue]This function is used to set a random seed for reproducibility in PyTorch models. It ensures that the same sequence of random numbers is generated every time the model is run with the same seed value, making it easier to debug and test models.[/blue]
+2024-12-01 22:19:10
+[
+    {
+        "arg": "seed",
+        "description": " (int) \u2013 The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) \u2013 Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-01 22:19:24
+function state_dict description: 
+[blue]This function is used to retrieve the model's state dictionary, which contains the learned parameters and their values, allowing for model loading and saving.[/blue]
+2024-12-01 22:19:55
+[
+    {
+        "arg": "self",
+        "description": "(torchvision.utils.data.DataloaderIterator) \u2013 The data iterator to synchronize with. (default: None)"
+    },
+    {
+        "arg": "prefix",
+        "description": "(str) \u2013 Prefix for the keys in the state dictionary. (default: 'data')"
+    },
+    {
+        "arg": "local_rank",
+        "description": "(int) \u2013 Local rank of this process. (default: 0)"
+    }
+]
+2024-12-01 22:20:12
+function load_state_dict description: 
+[blue]This function is used to load the state dictionary of a PyTorch model from an existing checkpoint or saved model. It allows for the transfer of learned parameters and other model state between different runs or environments, enabling faster development and deployment.[/blue]
+2024-12-01 22:20:43
+[
+    {
+        "arg": "self",
+        "description": "(None) \u2013 The instance of MultiSyncDataCollector. (default: None)"
+    },
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) \u2013 The model state dictionary to be loaded into the current state."
+    },
+    {
+        "arg": "None",
+        "description": "(None) \u2013 Not used in this function."
+    }
+]
+2024-12-01 22:20:58
+function update_policy_weights_ description: 
+[blue]This function is a method that updates the weights of a policy in a reinforcement learning model by calling the parent class's `update_policy_weights_` method.[/blue]
+2024-12-01 22:21:26
+[
+    {
+        "arg": "policy_weights",
+        "description": " (Optional[TensorDictBase]) \u2013 The policy weights to be updated. (default: None)"
+    },
+    {
+        "arg": "self",
+        "description": " (<class 'MultiSyncDataCollector'>) \u2013 The instance of the class."
+    }
+]
+2024-12-01 22:21:52
+function frames_per_batch_worker description: 
+[blue]This function is used to calculate the effective `frames_per_batch` value for a batch of frames when using multiple collector workers, ensuring that the requested FPS is achieved despite the increased number of frames per iteration.[/blue]
+2024-12-01 22:22:15
+[
+    {
+        "arg": "frames_per_batch_worker",
+        "description": "(int) \u2013 The number of frames to process in each batch. (default: 1)"
+    }
+]
+2024-12-01 22:25:39
+function iterator description: 
+[blue]This function is a PyTorch iterator that generates batches of data from a collection of buffers, applying various transformations and filtering criteria along the way. It's used to process and combine data from multiple workers in a distributed environment, yielding a batched output for further processing or training.[/blue]
+2024-12-01 22:26:39
+[
+    {
+        "arg": "self",
+        "description": "(Iterator[TensorDictBase]) \u2013 The data collector instance. (default: None)"
+    },
+    {
+        "arg": "T",
+        "description": "(type) \u2013 The type of the data to be collected."
+    },
+    {
+        "arg": "data",
+        "description": "(list[dict[str, Tensor]]) \u2013 A list of dictionaries containing the data to be collected."
+    },
+    {
+        "arg": "batch_size",
+        "description": "(int) \u2013 The batch size. (default: 1)"
+    },
+    {
+        "arg": "shuffle",
+        "description": "(bool) \u2013 Whether to shuffle the data. (default: False)"
+    },
+    {
+        "arg": "drop_last",
+        "description": "(bool) \u2013 Whether to drop the last incomplete batch. (default: True)"
+    },
+    {
+        "arg": "num_workers",
+        "description": "(int) \u2013 The number of worker threads. (default: 0)"
+    },
+    {
+        "arg": "pin_memory",
+        "description": "(bool) \u2013 Whether to pin the memory allocation for each tensor. (default: False)"
+    }
+]
+2024-12-01 22:26:55
+class MultiaSyncDataCollector description: 
+[blue]This class is a data collector for multi-agent environments, designed to collect and store experiences from multiple agents in parallel, allowing for efficient training of multi-agent reinforcement learning models.[/blue]
+2024-12-01 22:27:24
+function __init__ description: 
+[blue]This function is a special method in PyTorch classes that initializes the object's attributes when an instance of the class is created. It should be used to set up the initial state of the object, including any necessary computations or data structures, and is typically called automatically when an instance of the class is created.[/blue]
+2024-12-01 22:27:50
+[
+    {
+        "arg": "*args",
+        "description": "(tuple) \u2013 Variable length argument list. (default: None)"
+    },
+    {
+        "arg": "**kwargs",
+        "description": "(dict) \u2013 Arbitrary keyword arguments. (default: None)"
+    }
+]
+2024-12-01 22:28:05
+function next description: 
+[blue]This function is a placeholder that delegates to the parent class's `next` method, effectively bypassing any custom implementation. It should be used when you want to maintain the default behavior of the parent class while still providing a consistent interface for subclasses.[/blue]
+2024-12-01 22:28:33
+[
+    {
+        "arg": "self",
+        "description": "(MultiaSyncDataCollector) \u2013 The instance of MultiaSyncDataCollector class. (default: None)"
+    },
+    {
+        "arg": "data",
+        "description": "(list or tuple) \u2013 A list or tuple containing the data to be collected. (default: None)"
+    }
+]
+2024-12-01 22:28:48
+function shutdown description: 
+[blue]This function is used to clean up resources and finalize the shutdown of a PyTorch model or module instance before calling its parent class's `shutdown` method.[/blue]
+2024-12-01 22:29:09
+[
+    {
+        "arg": "self",
+        "description": "(None) \u2013 The instance of MultiaSyncDataCollector. (default: None)"
+    }
+]
+2024-12-01 22:29:27
+function set_seed description: 
+[blue]This function is used to set a random seed for reproducibility in PyTorch models. It ensures that the same sequence of random numbers is generated every time the model is run with the same seed value, making it easier to debug and test models.[/blue]
+2024-12-01 22:29:54
+[
+    {
+        "arg": "seed",
+        "description": " (int) \u2013 The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) \u2013 Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-01 22:30:07
+function state_dict description: 
+[blue]This function is used to retrieve the model's state dictionary, which contains the learned parameters and their values, allowing for model loading and saving.[/blue]
+2024-12-01 22:30:34
+[
+    {
+        "arg": "self",
+        "description": "(torchvision.utils.data.DataloaderIterator) \u2013 The data iterator to retrieve the state dictionary from. (default: None)"
+    },
+    {
+        "arg": "OrderedDict",
+        "description": "\u2013 The ordered dictionary containing the model's state. (default: None)"
+    }
+]
+2024-12-01 22:30:51
+function load_state_dict description: 
+[blue]This function is used to load the state dictionary of a PyTorch model from an existing checkpoint or saved model. It allows for the transfer of learned parameters and other model state between different runs or environments, enabling faster development and deployment.[/blue]
+2024-12-01 22:31:25
+[
+    {
+        "arg": "self",
+        "description": "(None) \u2013 The instance of MultiaSyncDataCollector. (default: None)"
+    },
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) \u2013 The model state dictionary to load into the current state, populating all and making no changes to it."
+    },
+    {
+        "arg": "None",
+        "description": "(None) \u2013 Not used in this function. (default: None)"
+    }
+]
+2024-12-01 22:31:40
+function update_policy_weights_ description: 
+[blue]This function is a method that updates the weights of a policy in a reinforcement learning model by calling the parent class's `update_policy_weights_` method.[/blue]
+2024-12-01 22:32:08
+[
+    {
+        "arg": "policy_weights",
+        "description": " (Optional[TensorDictBase]) \u2013 The policy weights to be updated. (default: None)"
+    },
+    {
+        "arg": "self",
+        "description": " (<class 'MultiaSyncDataCollector'>) \u2013 The instance of the class."
+    }
+]
+2024-12-01 22:32:22
+function frames_per_batch_worker description: 
+[blue]This function is a read-only property that returns the requested frames per batch, indicating its significance as a configuration setting for video processing and batching in PyTorch.[/blue]
+2024-12-01 22:32:44
+[
+    {
+        "arg": "frames_per_batch_worker",
+        "description": "(int) \u2013 The number of frames to process in each batch. (default: 1)"
+    }
+]
+2024-12-01 22:33:41
+function iterator description: 
+[blue]This function is a PyTorch iterator that manages the data processing pipeline, handling tasks such as updating policy weights, sending messages to workers, and yielding processed output tensors.[/blue]
+2024-12-01 22:34:32
+[
+    {
+        "arg": "self",
+        "description": "(Iterator[TensorDictBase]) \u2013 The data collector instance. (default: None)"
+    },
+    {
+        "arg": "T",
+        "description": "(type) \u2013 The type of the data to be collected. (default: None)"
+    },
+    {
+        "arg": "batch_size",
+        "description": "(int) \u2013 The batch size for collecting data. (default: 1)"
+    },
+    {
+        "arg": "shuffle",
+        "description": "(bool) \u2013 Whether to shuffle the data before collecting it. (default: False)"
+    },
+    {
+        "arg": "drop_last",
+        "description": "(bool) \u2013 Whether to drop the last batch if its size is less than the batch size. (default: True)"
+    },
+    {
+        "arg": "pin_memory",
+        "description": "(bool) \u2013 Whether to pin the data in memory. (default: False)"
+    }
+]
+2024-12-01 22:34:58
+function reset description: 
+[blue]This function is used to reset the state of a worker in a multi-worker queue system, ensuring that workers continue processing tasks after a certain period or when new frames are available.[/blue]
+2024-12-01 22:35:28
+[
+    {
+        "arg": "reset_idx",
+        "description": " (Optional[Sequence[bool]]) \u2013 Indexes of data to be reset. (default: None)"
+    },
+    {
+        "arg": "self",
+        "description": " \u2013 The instance of MultiaSyncDataCollector."
+    },
+    {
+        "arg": "reset",
+        "description": " () -> None"
+    }
+]
+2024-12-01 22:35:43
+class aSyncDataCollector description: 
+[blue]This class is an asynchronous data collector, designed to efficiently collect and store data from various sources in a PyTorch environment, allowing for seamless integration with other components.[/blue]
+2024-12-01 22:36:49
+function __init__ description: 
+[blue]This function is the constructor of a class in PyTorch, used to initialize an object with its attributes and parameters. It sets up the environment for training or testing a reinforcement learning algorithm.[/blue]
+2024-12-02 08:04:31
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 08:10:05
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 08:13:13
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 08:14:06
+[
+    {
+        "arg": "dictionary",
+        "description": "(OrderedDict) \u2013 The input dictionary to be mapped to CPU."
+    },
+    {
+        "arg": "None",
+        "description": " (None) \u2013 No description available."
+    }
+]
+2024-12-02 08:14:28
+class DataCollectorBase description: 
+[blue]This class is a base class for data collectors in PyTorch, providing a common interface for updating model weights and other state during training or testing. It allows for flexible customization of the data collection process through its methods, such as `update_policy_weights_` and `set_seed`, making it a crucial component in building robust and efficient machine learning pipelines.[/blue]
+2024-12-02 08:14:54
+function update_policy_weights_ description: 
+[blue]This function is used to update the weights of a policy in PyTorch, ensuring consistency across devices when using data collectors and trained policies.[/blue]
+2024-12-02 08:15:45
+[
+    {
+        "arg": "policy_weights",
+        "description": "(Optional[TensorDictBase]) \u2013 The policy weights to be updated."
+    }
+]
+2024-12-02 08:16:01
+function next description: 
+[blue]This function is used to retrieve the next item from an iterator, handling cases where the iterator has reached its end.[/blue]
+2024-12-02 08:17:07
+[
+    {
+        "arg": "self",
+        "description": "(object) \u2013 The model instance."
+    },
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) \u2013 The model state dictionary to be loaded into the current state."
+    },
+    {
+        "arg": "seed",
+        "description": " (int) \u2013 The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) \u2013 Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 08:17:22
+function shutdown description: 
+[blue]This function is an abstract method that serves as a hook for customizing the shutdown process of a PyTorch module, allowing developers to implement specific cleanup actions before the module is unloaded.[/blue]
+2024-12-02 08:18:23
+[
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) \u2013 The model state dictionary to be loaded into the current state."
+    },
+    {
+        "arg": "seed",
+        "description": " (int) \u2013 The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) \u2013 Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 08:18:37
+function iterator description: 
+[blue]This function is an abstract base class method that defines the interface for creating an iterator over a TensorDict, allowing for iteration over its key-value pairs or values.[/blue]
+2024-12-02 08:19:56
+[
+    {
+        "arg": "self",
+        "description": "(object) \u2013 The model instance."
+    },
+    {
+        "arg": "args",
+        "description": "(tuple or list of any type) \u2013 Additional positional arguments passed to the module."
+    },
+    {
+        "arg": "kwargs",
+        "description": "(dict) \u2013 Additional keyword arguments passed to the module."
+    },
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) \u2013 The model state dictionary to be loaded into the current state."
+    },
+    {
+        "arg": "seed",
+        "description": " (int) \u2013 The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) \u2013 Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 08:29:08
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 08:37:36
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 09:14:58
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 09:18:53
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 09:20:12
+[
+    {
+        "arg": "dictionary",
+        "description": "(OrderedDict) - The dictionary to be mapped to CPU."
+    },
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) - The model state dictionary to be loaded into the current state."
+    },
+    {
+        "arg": "seed",
+        "description": " (int) - The random seed to be used."
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) - Whether the static seed is used."
+    }
+]
+2024-12-02 09:20:37
+class DataCollectorBase description: 
+[blue]This class is a base class for data collectors in PyTorch, providing a common interface for updating model weights and other state during training or testing. It allows for flexible customization of the data collection process through its methods, such as `update_policy_weights_` and `set_seed`, making it a crucial component in building robust and efficient machine learning pipelines.[/blue]
+2024-12-02 09:21:05
+function update_policy_weights_ description: 
+[blue]This function is used to update the weights of a policy in PyTorch, ensuring consistency across devices when using data collectors and trained policies.[/blue]
+2024-12-02 09:22:10
+[
+    {
+        "arg": "policy_weights",
+        "description": "(Optional[TensorDictBase]) - The policy weights to be updated. (default: None)"
+    }
+]
+2024-12-02 09:22:27
+function next description: 
+[blue]This function is used to retrieve the next item from an iterator, handling cases where the iterator has reached its end.[/blue]
+2024-12-02 09:23:37
+[
+    {
+        "arg": "self",
+        "description": "(object) - The instance of the class."
+    },
+    {
+        "arg": "args",
+        "description": " (*) - Variable length argument list."
+    },
+    {
+        "arg": "kwargs",
+        "description": " (**kwargs) - Arbitrary keyword arguments."
+    }
+]
+2024-12-02 09:23:53
+function shutdown description: 
+[blue]This function is an abstract method that serves as a hook for customizing the shutdown process of a PyTorch module, allowing developers to implement specific cleanup actions before the module is unloaded.[/blue]
+2024-12-02 09:25:09
+[
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) - The model state dictionary to be loaded into the current state."
+    },
+    {
+        "arg": "seed",
+        "description": " (int) - The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) - Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 09:25:25
+function iterator description: 
+[blue]This function is an abstract base class method that defines the interface for creating an iterator over a TensorDict, allowing for iteration over its key-value pairs or values.[/blue]
+2024-12-02 09:26:36
+[
+    {
+        "arg": "self",
+        "description": "(object) - The instance of the class."
+    },
+    {
+        "arg": "*args",
+        "description": "(tuple) - Variable length argument list."
+    },
+    {
+        "arg": "**kwargs",
+        "description": "(dict) - Arbitrary keyword arguments."
+    }
+]
+2024-12-02 09:26:55
+function set_seed description: 
+[blue]This function is used to set a random seed for reproducibility in PyTorch models, ensuring that the same sequence of random numbers is generated during training and testing, thereby facilitating reliable comparisons and debugging.[/blue]
+2024-12-02 09:28:50
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 09:29:54
+[
+    {
+        "arg": "dictionary",
+        "description": "(OrderedDict) - The input dictionary to be mapped to CPU."
+    },
+    {
+        "arg": "self",
+        "description": " (None) - This parameter is ignored as it's the only argument in the list."
+    }
+]
+2024-12-02 09:30:19
+class DataCollectorBase description: 
+[blue]This class is a base class for data collectors in PyTorch, providing a common interface for updating model weights and other state during training or testing. It allows for flexible customization of the data collection process through its methods, such as `update_policy_weights_` and `set_seed`, making it a crucial component in building robust and efficient machine learning pipelines.[/blue]
+2024-12-02 09:30:47
+function update_policy_weights_ description: 
+[blue]This function is used to update the weights of a policy in PyTorch, ensuring consistency across devices when using data collectors and trained policies.[/blue]
+2024-12-02 09:31:59
+[
+    {
+        "arg": "policy_weights",
+        "description": "(Optional[TensorDictBase]) - The policy weights to be updated. (default: None)"
+    }
+]
+2024-12-02 09:32:17
+function next description: 
+[blue]This function is used to retrieve the next item from an iterator, handling cases where the iterator has reached its end.[/blue]
+2024-12-02 09:33:41
+[
+    {
+        "arg": "self",
+        "description": "(object) - The instance of the class."
+    },
+    {
+        "arg": "*args",
+        "description": "[...]"
+    },
+    {
+        "arg": "**kwargs",
+        "description": "[...]"
+    },
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) - The model state dictionary to be loaded into the current state."
+    },
+    {
+        "arg": "seed",
+        "description": " (int) - The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) - Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 09:33:57
+function shutdown description: 
+[blue]This function is an abstract method that serves as a hook for customizing the shutdown process of a PyTorch module, allowing developers to implement specific cleanup actions before the module is unloaded.[/blue]
+2024-12-02 09:35:20
+[
+    {
+        "arg": "self",
+        "description": "(object) - The instance of the class."
+    },
+    {
+        "arg": "*args",
+        "description": "[...]"
+    },
+    {
+        "arg": "**kwargs",
+        "description": "[...]"
+    },
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) - The model state dictionary to be loaded into the current state."
+    },
+    {
+        "arg": "seed",
+        "description": " (int) - The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) - Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 09:35:37
+function iterator description: 
+[blue]This function is an abstract base class method that defines the interface for creating an iterator over a TensorDict, allowing for iteration over its key-value pairs or values.[/blue]
+2024-12-02 09:59:26
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 10:00:17
+[
+    {
+        "arg": "dictionary",
+        "description": "(OrderedDict) - The dictionary to be mapped to CPU."
+    },
+    {
+        "arg": "None",
+        "description": " () - No description provided."
+    }
+]
+2024-12-02 10:00:39
+class DataCollectorBase description: 
+[blue]This class is a base class for data collectors in PyTorch, providing a common interface for updating model weights and other state during training or testing. It allows for flexible customization of the data collection process through its methods, such as `update_policy_weights_` and `set_seed`, making it a crucial component in building robust and efficient machine learning pipelines.[/blue]
+2024-12-02 10:01:04
+function update_policy_weights_ description: 
+[blue]This function is used to update the weights of a policy in PyTorch, ensuring consistency across devices when using data collectors and trained policies.[/blue]
+2024-12-02 10:02:00
+[
+    {
+        "arg": "policy_weights",
+        "description": "(Optional[TensorDictBase]) - The policy weights to be updated. (default: None)"
+    },
+    {
+        "arg": "self",
+        "description": "(object) - The instance of the class that owns this method."
+    }
+]
+2024-12-02 10:02:16
+function next description: 
+[blue]This function is used to retrieve the next item from an iterator, handling cases where the iterator has reached its end.[/blue]
+2024-12-02 10:03:19
+[
+    {
+        "arg": "self",
+        "description": "(object) - The instance of the class."
+    },
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) - The model state dictionary to be loaded into the current state."
+    },
+    {
+        "arg": "seed",
+        "description": " (int) - The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) - Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 10:03:33
+function shutdown description: 
+[blue]This function is an abstract method that serves as a hook for customizing the shutdown process of a PyTorch module, allowing developers to implement specific cleanup actions before the module is unloaded.[/blue]
+2024-12-02 10:04:35
+[
+    {
+        "arg": "self",
+        "description": "(object) - The instance of the class."
+    },
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) - The model state dictionary to be loaded into the current state."
+    },
+    {
+        "arg": "seed",
+        "description": " (int) - The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) - Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 10:04:49
+function iterator description: 
+[blue]This function is an abstract base class method that defines the interface for creating an iterator over a TensorDict, allowing for iteration over its key-value pairs or values.[/blue]
+2024-12-02 10:05:49
+[
+    {
+        "arg": "self",
+        "description": "(object) - The instance of the class."
+    },
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) - The model state dictionary to be loaded into the current state."
+    },
+    {
+        "arg": "seed",
+        "description": " (int) - The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) - Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 10:06:06
+function set_seed description: 
+[blue]This function is used to set a random seed for reproducibility in PyTorch models, ensuring that the same sequence of random numbers is generated during training and testing, thereby facilitating reliable comparisons and debugging.[/blue]
+2024-12-02 10:06:58
+[
+    {
+        "arg": "seed",
+        "description": " (int) - The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) - Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 10:07:10
+function state_dict description: 
+[blue]This function is used to serialize and retrieve the model's weights and biases into a dictionary, allowing for easy saving and loading of the model's state.[/blue]
+2024-12-02 10:07:58
+[
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) - The model state dictionary to be loaded into the current state."
+    }
+]
+2024-12-02 10:08:14
+function load_state_dict description: 
+[blue]This function is used to load the state dictionary of a PyTorch model from a given state dictionary, allowing for model checkpointing and resuming training from a saved state.[/blue]
+2024-12-02 10:09:03
+[
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) - The model state dictionary to be loaded into the current state."
+    }
+]
+2024-12-02 10:09:19
+class SyncDataCollector description: 
+[blue]This class is a data collector used to synchronize and collect data from multiple workers in a distributed training setup, ensuring consistency across the model's parameters.[/blue]
+2024-12-02 10:21:28
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 10:22:21
+[
+    {
+        "arg": "dictionary",
+        "description": "(OrderedDict) - The ordered dictionary to be mapped to CPU."
+    },
+    {
+        "arg": "None",
+        "description": " () - No description available."
+    }
+]
+2024-12-02 10:22:43
+class DataCollectorBase description: 
+[blue]This class is a base class for data collectors in PyTorch, providing a common interface for updating model weights and other state during training or testing. It allows for flexible customization of the data collection process through its methods, such as `update_policy_weights_` and `set_seed`, making it a crucial component in building robust and efficient machine learning pipelines.[/blue]
+2024-12-02 10:23:10
+function update_policy_weights_ description: 
+[blue]This function is used to update the weights of a policy in PyTorch, ensuring consistency across devices when using data collectors and trained policies.[/blue]
+2024-12-02 10:24:04
+[
+    {
+        "arg": "policy_weights",
+        "description": "(Optional[TensorDictBase]) - The policy weights to be updated. (default: None)"
+    },
+    {
+        "arg": "_",
+        "description": " (...) -> None"
+    }
+]
+2024-12-02 10:24:20
+function next description: 
+[blue]This function is used to retrieve the next item from an iterator, handling cases where the iterator has reached its end.[/blue]
+2024-12-02 10:25:26
+[
+    {
+        "arg": "self",
+        "description": "(object) - The instance of the class."
+    },
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) - The model state dictionary to be loaded into the current state."
+    },
+    {
+        "arg": "seed",
+        "description": " (int) - The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) - Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 10:25:40
+function shutdown description: 
+[blue]This function is an abstract method that serves as a hook for customizing the shutdown process of a PyTorch module, allowing developers to implement specific cleanup actions before the module is unloaded.[/blue]
+2024-12-02 10:26:28
+[
+    {
+        "arg": "shutdown",
+        "description": "(None) - Shutdown the PyTorch engine and exit the process."
+    }
+]
+2024-12-02 10:26:43
+function iterator description: 
+[blue]This function is an abstract base class method that defines the interface for creating an iterator over a TensorDict, allowing for iteration over its key-value pairs or values.[/blue]
+2024-12-02 10:29:20
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 10:30:13
+[
+    {
+        "arg": "dictionary",
+        "description": "(OrderedDict) - The ordered dictionary to be mapped to CPU."
+    },
+    {
+        "arg": "None",
+        "description": " () - No description available."
+    }
+]
+2024-12-02 10:30:36
+class DataCollectorBase description: 
+[blue]This class is a base class for data collectors in PyTorch, providing a common interface for updating model weights and other state during training or testing. It allows for flexible customization of the data collection process through its methods, such as `update_policy_weights_` and `set_seed`, making it a crucial component in building robust and efficient machine learning pipelines.[/blue]
+2024-12-02 10:31:01
+function update_policy_weights_ description: 
+[blue]This function is used to update the weights of a policy in PyTorch, ensuring consistency across devices when using data collectors and trained policies.[/blue]
+2024-12-02 10:40:45
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 10:41:38
+[
+    {
+        "arg": "dictionary",
+        "description": "(OrderedDict) - The ordered dictionary to be mapped to CPU."
+    },
+    {
+        "arg": "None",
+        "description": " () - No description available."
+    }
+]
+2024-12-02 10:42:00
+class DataCollectorBase description: 
+[blue]This class is a base class for data collectors in PyTorch, providing a common interface for updating model weights and other state during training or testing. It allows for flexible customization of the data collection process through its methods, such as `update_policy_weights_` and `set_seed`, making it a crucial component in building robust and efficient machine learning pipelines.[/blue]
+2024-12-02 10:42:26
+function update_policy_weights_ description: 
+[blue]This function is used to update the weights of a policy in PyTorch, ensuring consistency across devices when using data collectors and trained policies.[/blue]
+2024-12-02 16:01:15
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 16:02:09
+[
+    {
+        "arg": "dictionary",
+        "description": "(OrderedDict) - The ordered dictionary to be mapped to CPU."
+    },
+    {
+        "arg": "None",
+        "description": " () - No description available."
+    }
+]
+2024-12-02 16:02:32
+class DataCollectorBase description: 
+[blue]This class is a base class for data collectors in PyTorch, providing a common interface for updating model weights and other state during training or testing. It allows for flexible customization of the data collection process through its methods, such as `update_policy_weights_` and `set_seed`, making it a crucial component in building robust and efficient machine learning pipelines.[/blue]
+2024-12-02 16:02:57
+function update_policy_weights_ description: 
+[blue]This function is used to update the weights of a policy in PyTorch, ensuring consistency across devices when using data collectors and trained policies.[/blue]
+2024-12-02 16:05:44
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 16:06:26
+[
+    {
+        "arg": "dictionary",
+        "description": "(OrderedDict) - The ordered dictionary to be mapped to CPU."
+    }
+]
+2024-12-02 16:06:48
+class DataCollectorBase description: 
+[blue]This class is a base class for data collectors in PyTorch, providing a common interface for updating model weights and other state during training or testing. It allows for flexible customization of the data collection process through its methods, such as `update_policy_weights_` and `set_seed`, making it a crucial component in building robust and efficient machine learning pipelines.[/blue]
+2024-12-02 16:07:13
+function update_policy_weights_ description: 
+[blue]This function is used to update the weights of a policy in PyTorch, ensuring consistency across devices when using data collectors and trained policies.[/blue]
+2024-12-02 16:12:31
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 16:13:14
+[
+    {
+        "arg": "dictionary",
+        "description": "(OrderedDict) - The ordered dictionary to be mapped to CPU."
+    }
+]
+2024-12-02 16:13:36
+class DataCollectorBase description: 
+[blue]This class is a base class for data collectors in PyTorch, providing a common interface for updating model weights and other state during training or testing. It allows for flexible customization of the data collection process through its methods, such as `update_policy_weights_` and `set_seed`, making it a crucial component in building robust and efficient machine learning pipelines.[/blue]
+2024-12-02 16:14:01
+function update_policy_weights_ description: 
+[blue]This function is used to update the weights of a policy in PyTorch, ensuring consistency across devices when using data collectors and trained policies.[/blue]
+2024-12-02 16:14:01
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:14:17
+function next description: 
+[blue]This function is used to retrieve the next item from an iterator, handling cases where the iterator has reached its end.[/blue]
+2024-12-02 16:14:17
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:14:30
+function shutdown description: 
+[blue]This function is an abstract method that serves as a hook for customizing the shutdown process of a PyTorch module, allowing developers to implement specific cleanup actions before the module is unloaded.[/blue]
+2024-12-02 16:14:30
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:14:44
+function iterator description: 
+[blue]This function is an abstract base class method that defines the interface for creating an iterator over a TensorDict, allowing for iteration over its key-value pairs or values.[/blue]
+2024-12-02 16:14:44
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:15:00
+function set_seed description: 
+[blue]This function is used to set a random seed for reproducibility in PyTorch models, ensuring that the same sequence of random numbers is generated during training and testing, thereby facilitating reliable comparisons and debugging.[/blue]
+2024-12-02 16:15:00
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:15:12
+function state_dict description: 
+[blue]This function is used to serialize and retrieve the model's weights and biases into a dictionary, allowing for easy saving and loading of the model's state.[/blue]
+2024-12-02 16:15:12
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:15:27
+function load_state_dict description: 
+[blue]This function is used to load the state dictionary of a PyTorch model from a given state dictionary, allowing for model checkpointing and resuming training from a saved state.[/blue]
+2024-12-02 16:15:27
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:15:42
+class SyncDataCollector description: 
+[blue]This class is a data collector used to synchronize and collect data from multiple workers in a distributed training setup, ensuring consistency across the model's parameters.[/blue]
+2024-12-02 16:32:36
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 16:33:18
+[
+    {
+        "arg": "dictionary",
+        "description": "(OrderedDict) - The ordered dictionary to be mapped to CPU."
+    }
+]
+2024-12-02 16:33:40
+class DataCollectorBase description: 
+[blue]This class is a base class for data collectors in PyTorch, providing a common interface for updating model weights and other state during training or testing. It allows for flexible customization of the data collection process through its methods, such as `update_policy_weights_` and `set_seed`, making it a crucial component in building robust and efficient machine learning pipelines.[/blue]
+2024-12-02 16:34:05
+function update_policy_weights_ description: 
+[blue]This function is used to update the weights of a policy in PyTorch, ensuring consistency across devices when using data collectors and trained policies.[/blue]
+2024-12-02 16:34:55
+[
+    {
+        "arg": "policy_weights",
+        "description": "(Optional[TensorDictBase]) - The policy weights to be updated. (default: None)"
+    },
+    {
+        "arg": "_",
+        "description": " (...) -> None"
+    }
+]
+2024-12-02 16:35:11
+function next description: 
+[blue]This function is used to retrieve the next item from an iterator, handling cases where the iterator has reached its end.[/blue]
+2024-12-02 16:35:11
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:35:24
+function shutdown description: 
+[blue]This function is an abstract method that serves as a hook for customizing the shutdown process of a PyTorch module, allowing developers to implement specific cleanup actions before the module is unloaded.[/blue]
+2024-12-02 16:35:24
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:35:38
+function iterator description: 
+[blue]This function is an abstract base class method that defines the interface for creating an iterator over a TensorDict, allowing for iteration over its key-value pairs or values.[/blue]
+2024-12-02 16:35:38
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:35:54
+function set_seed description: 
+[blue]This function is used to set a random seed for reproducibility in PyTorch models, ensuring that the same sequence of random numbers is generated during training and testing, thereby facilitating reliable comparisons and debugging.[/blue]
+2024-12-02 16:36:46
+[
+    {
+        "arg": "seed",
+        "description": " (int) - The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) - Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 16:36:59
+function state_dict description: 
+[blue]This function is used to serialize and retrieve the model's weights and biases into a dictionary, allowing for easy saving and loading of the model's state.[/blue]
+2024-12-02 16:36:59
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:37:14
+function load_state_dict description: 
+[blue]This function is used to load the state dictionary of a PyTorch model from a given state dictionary, allowing for model checkpointing and resuming training from a saved state.[/blue]
+2024-12-02 16:37:57
+[
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) - The model state dictionary to be loaded into the current state."
+    }
+]
+2024-12-02 16:38:13
+class SyncDataCollector description: 
+[blue]This class is a data collector used to synchronize and collect data from multiple workers in a distributed training setup, ensuring consistency across the model's parameters.[/blue]
+2024-12-02 16:45:11
+function __init__ description: 
+[blue]This function is the constructor for a class that initializes various attributes and settings for an environment, policy, and rollout. It takes in numerous keyword arguments to customize its behavior, including batch size, frames per batch, total frames, exploration type, and more. The class appears to be designed for reinforcement learning tasks, particularly those involving batched environments and policies.[/blue]
+2024-12-02 16:49:35
+[
+    {
+        "arg": "create_env_fn",
+        "description": "(Union[EnvBase, 'EnvCreator', Sequence[Callable[[], EnvBase]]]) - The function to create an environment. (default: None)"
+    },
+    {
+        "arg": "policy",
+        "description": "(Optional[Union[TensorDictModule, Callable[[TensorDictBase], TensorDictBase]]]) - The policy to be used. (default: None)"
+    },
+    {
+        "arg": "frames_per_batch",
+        "description": "(int) - The number of frames per batch. (default: -1)"
+    },
+    {
+        "arg": "total_frames",
+        "description": "(int) - The total number of frames. (default: -1)"
+    },
+    {
+        "arg": "device",
+        "description": "(DEVICE_TYPING) - The device to use for the environment. (default: None)"
+    },
+    {
+        "arg": "storing_device",
+        "description": "(DEVICE_TYPING) - The device to store the environment. (default: None)"
+    },
+    {
+        "arg": "policy_device",
+        "description": "(DEVICE_TYPING) - The device to use for the policy. (default: None)"
+    },
+    {
+        "arg": "env_device",
+        "description": "(DEVICE_TYPING) - The device to use for the environment. (default: None)"
+    },
+    {
+        "arg": "create_env_kwargs",
+        "description": "(dict | None) - The keyword arguments to pass to create_env_fn. (default: None)"
+    },
+    {
+        "arg": "max_frames_per_traj",
+        "description": "(int | None) - The maximum number of frames per trajectory. (default: None)"
+    },
+    {
+        "arg": "init_random_frames",
+        "description": "(int | None) - The initial random frames. (default: None)"
+    },
+    {
+        "arg": "reset_at_each_iter",
+        "description": "(bool) - Whether to reset at each iteration. (default: False)"
+    },
+    {
+        "arg": "postproc",
+        "description": "(Callable[[TensorDictBase], TensorDictBase] | None) - The post-processing function for the environment. (default: None)"
+    },
+    {
+        "arg": "split_trajs",
+        "description": "(bool | None) - Whether to split trajectories. (default: None)"
+    },
+    {
+        "arg": "exploration_type",
+        "description": "(ExplorationType=DEFAULT_EXPLORATION_TYPE) - The type of exploration to use."
+    },
+    {
+        "arg": "return_same_td",
+        "description": "(bool) - Whether to return the same TD. (default: False)"
+    },
+    {
+        "arg": "reset_when_done",
+        "description": "(bool) - Whether to reset when done. (default: True)"
+    },
+    {
+        "arg": "interruptor",
+        "description": "(None) - The interruptor."
+    },
+    {
+        "arg": "set_truncated",
+        "description": "(bool) - Whether to set truncated. (default: False)"
+    },
+    {
+        "arg": "use_buffers",
+        "description": "(bool | None) - Whether to use buffers. (default: None)"
+    },
+    {
+        "arg": "replay_buffer",
+        "description": "(ReplayBuffer | None) - The replay buffer."
+    },
+    {
+        "arg": "trust_policy",
+        "description": "(None) - The trust policy."
+    },
+    {
+        "arg": "compile_policy",
+        "description": "(bool | Dict[str, Any] | None) - Whether to compile the policy. (default: None)"
+    },
+    {
+        "arg": "cudagraph_policy",
+        "description": "(bool | Dict[str, Any] | None) - The cudagraph policy."
+    }
+]
+2024-12-02 16:49:51
+function next description: 
+[blue]This function is a placeholder that delegates to the parent class's `next` method, effectively bypassing any custom implementation. It should be used when you want to maintain the default behavior of the parent class while still providing a consistent interface for subclasses.[/blue]
+2024-12-02 16:49:51
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:50:05
+function update_policy_weights_ description: 
+[blue]This function is a method that updates the weights of a policy in a reinforcement learning model by calling the parent class's `update_policy_weights_` method.[/blue]
+2024-12-02 16:50:55
+[
+    {
+        "arg": "policy_weights",
+        "description": "(Optional[TensorDictBase]) - The policy weights to be updated. (default: None)"
+    },
+    {
+        "arg": "_",
+        "description": " (...) -> None"
+    }
+]
+2024-12-02 16:51:46
+function set_seed description: 
+[blue]This function is used to set the seeds for environments in a DataCollector, allowing for reproducibility and incrementing of seeds across multiple environments.[/blue]
+2024-12-02 16:52:38
+[
+    {
+        "arg": "seed",
+        "description": " (int) - The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) - Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 16:54:17
+function iterator description: 
+[blue]This function is used to iterate through a DataCollector, yielding TensorDictBase objects containing chunks of trajectories. It manages CUDA streams and events for efficient data collection on GPU devices.[/blue]
+2024-12-02 16:54:17
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:56:51
+function rollout description: 
+[blue]This function is used to generate a rollout in the environment using the provided policy. It returns a TensorDictBase containing the computed rollout and can be used for training reinforcement learning agents by sampling multiple rollouts from the same policy and averaging their outputs.[/blue]
+2024-12-02 16:56:51
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:57:28
+function reset description: 
+[blue]This function is used to reset environments in a PyTorch environment, updating the internal state and metadata accordingly.[/blue]
+2024-12-02 16:58:16
+[
+    {
+        "arg": "index",
+        "description": "(int or tuple of ints) - The index at which to reset the model state."
+    },
+    {
+        "arg": "kwargs",
+        "description": " (*) - Additional keyword arguments. (default: None)"
+    }
+]
+2024-12-02 16:58:36
+function shutdown description: 
+[blue]This function is used to cleanly shut down a PyTorch environment, releasing system resources and ensuring proper cleanup.[/blue]
+2024-12-02 16:58:36
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:59:16
+function state_dict description: 
+[blue]This function is used to retrieve and combine the local state dictionaries of an environment and a policy in PyTorch RL. It returns an ordered dictionary containing both environment and policy state dictionaries, along with additional metadata such as frames and iteration number.[/blue]
+2024-12-02 16:59:16
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 16:59:47
+function load_state_dict description: 
+[blue]This function is used to load a pre-trained model's state dictionary into the environment and policy, allowing for the resumption of training or inference from a previously saved checkpoint.[/blue]
+2024-12-02 17:00:36
+[
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) - The model state dictionary to be loaded into the current state."
+    },
+    {
+        "arg": "kwargs",
+        "description": " (Any) - Additional keyword arguments. (default: None)"
+    }
+]
+2024-12-02 17:00:52
+class MultiSyncDataCollector description: 
+[blue]This class is a PyTorch data collector that synchronizes and batches data across multiple workers, ensuring consistent data distribution for training and evaluation.[/blue]
+2024-12-02 17:01:08
+function next description: 
+[blue]This function is a placeholder that delegates to the parent class's `next` method, effectively bypassing any custom implementation. It should be used when you want to maintain the default behavior of the parent class while still providing a consistent interface for subclasses.[/blue]
+2024-12-02 17:01:08
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:01:23
+function shutdown description: 
+[blue]This function is used to release resources held by a PyTorch model during shutdown, ensuring memory safety and preventing potential memory leaks.[/blue]
+2024-12-02 17:01:23
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:01:41
+function set_seed description: 
+[blue]This function is used to set a random seed for reproducibility in PyTorch models. It ensures that the same sequence of random numbers is generated every time the model is run with the same seed value, making it easier to debug and test models.[/blue]
+2024-12-02 17:02:31
+[
+    {
+        "arg": "seed",
+        "description": " (int) - The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) - Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 17:02:45
+function state_dict description: 
+[blue]This function is used to retrieve the model's state dictionary, which contains the learned parameters and their values, allowing for model loading and saving.[/blue]
+2024-12-02 17:02:45
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:03:02
+function load_state_dict description: 
+[blue]This function is used to load the state dictionary of a PyTorch model from an existing checkpoint or saved model. It allows for the transfer of learned parameters and other model state between different runs or environments, enabling faster development and deployment.[/blue]
+2024-12-02 17:03:45
+[
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) - The model state dictionary to be loaded into the current state."
+    }
+]
+2024-12-02 17:04:02
+function update_policy_weights_ description: 
+[blue]This function is a method that updates the weights of a policy in a reinforcement learning model by calling the parent class's `update_policy_weights_` method.[/blue]
+2024-12-02 17:04:49
+[
+    {
+        "arg": "policy_weights",
+        "description": "(Optional[TensorDictBase]) - The policy weights to be updated. (default: None)"
+    },
+    {
+        "arg": "_",
+        "description": " (...) -> None"
+    }
+]
+2024-12-02 17:05:16
+function frames_per_batch_worker description: 
+[blue]This function is used to calculate the effective `frames_per_batch` value for a batch of frames when using multiple collector workers, ensuring that the requested FPS is achieved despite the increased number of frames per iteration.[/blue]
+2024-12-02 17:05:16
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:08:57
+function iterator description: 
+[blue]This function is a PyTorch iterator that generates batches of data from a collection of buffers, applying various transformations and filtering criteria along the way. It's used to process and combine data from multiple workers in a distributed environment, yielding a batched output for further processing or training.[/blue]
+2024-12-02 17:08:57
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:09:15
+class MultiaSyncDataCollector description: 
+[blue]This class is a data collector for multi-agent environments, designed to collect and store experiences from multiple agents in parallel, allowing for efficient training of multi-agent reinforcement learning models.[/blue]
+2024-12-02 17:09:45
+function __init__ description: 
+[blue]This function is a special method in PyTorch classes that initializes the object's attributes when an instance of the class is created. It should be used to set up the initial state of the object, including any necessary computations or data structures, and is typically called automatically when an instance of the class is created.[/blue]
+2024-12-02 17:09:45
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:10:01
+function next description: 
+[blue]This function is a placeholder that delegates to the parent class's `next` method, effectively bypassing any custom implementation. It should be used when you want to maintain the default behavior of the parent class while still providing a consistent interface for subclasses.[/blue]
+2024-12-02 17:10:01
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:10:16
+function shutdown description: 
+[blue]This function is used to clean up resources and finalize the shutdown of a PyTorch model or module instance before calling its parent class's `shutdown` method.[/blue]
+2024-12-02 17:10:16
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:10:34
+function set_seed description: 
+[blue]This function is used to set a random seed for reproducibility in PyTorch models. It ensures that the same sequence of random numbers is generated every time the model is run with the same seed value, making it easier to debug and test models.[/blue]
+2024-12-02 17:11:24
+[
+    {
+        "arg": "seed",
+        "description": " (int) - The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) - Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 17:11:38
+function state_dict description: 
+[blue]This function is used to retrieve the model's state dictionary, which contains the learned parameters and their values, allowing for model loading and saving.[/blue]
+2024-12-02 17:11:38
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:11:55
+function load_state_dict description: 
+[blue]This function is used to load the state dictionary of a PyTorch model from an existing checkpoint or saved model. It allows for the transfer of learned parameters and other model state between different runs or environments, enabling faster development and deployment.[/blue]
+2024-12-02 17:12:38
+[
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) - The model state dictionary to be loaded into the current state."
+    }
+]
+2024-12-02 17:12:55
+function update_policy_weights_ description: 
+[blue]This function is a method that updates the weights of a policy in a reinforcement learning model by calling the parent class's `update_policy_weights_` method.[/blue]
+2024-12-02 17:13:44
+[
+    {
+        "arg": "policy_weights",
+        "description": "(Optional[TensorDictBase]) - The policy weights to be updated. (default: None)"
+    },
+    {
+        "arg": "_",
+        "description": " (...) -> None"
+    }
+]
+2024-12-02 17:13:59
+function frames_per_batch_worker description: 
+[blue]This function is a read-only property that returns the requested frames per batch, indicating its significance as a configuration setting for video processing and batching in PyTorch.[/blue]
+2024-12-02 17:13:59
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:14:59
+function iterator description: 
+[blue]This function is a PyTorch iterator that manages the data processing pipeline, handling tasks such as updating policy weights, sending messages to workers, and yielding processed output tensors.[/blue]
+2024-12-02 17:14:59
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:15:26
+function reset description: 
+[blue]This function is used to reset the state of a worker in a multi-worker queue system, ensuring that workers continue processing tasks after a certain period or when new frames are available.[/blue]
+2024-12-02 17:16:14
+[
+    {
+        "arg": "reset_idx",
+        "description": "(Optional[Sequence[bool]]) - The index of the model to be reset."
+    },
+    {
+        "arg": "None",
+        "description": " () - No description available."
+    }
+]
+2024-12-02 17:16:30
+class aSyncDataCollector description: 
+[blue]This class is an asynchronous data collector, designed to efficiently collect and store data from various sources in a PyTorch environment, allowing for seamless integration with other components.[/blue]
+2024-12-02 17:17:40
+function __init__ description: 
+[blue]This function is the constructor of a class in PyTorch, used to initialize an object with its attributes and parameters. It sets up the environment for training or testing a reinforcement learning algorithm.[/blue]
+2024-12-02 17:21:30
+[
+    {
+        "arg": "create_env_fn",
+        "description": "(Callable[[], EnvBase]) - The function to create an environment."
+    },
+    {
+        "arg": "policy",
+        "description": "(Optional[Union[TensorDictModule, Callable[[TensorDictBase], TensorDictBase]]]) - The policy used for exploration."
+    },
+    {
+        "arg": "frames_per_batch",
+        "description": "(int) - The number of frames per batch."
+    },
+    {
+        "arg": "total_frames",
+        "description": "(Optional[int]) - The total number of frames. (default: None)"
+    },
+    {
+        "arg": "device",
+        "description": "(DEVICE_TYPING | Sequence[DEVICE_TYPING] | None) - The device to use for the environment."
+    },
+    {
+        "arg": "storing_device",
+        "description": "(DEVICE_TYPING | Sequence[DEVICE_TYPING] | None) - The device to store the data on."
+    },
+    {
+        "arg": "env_device",
+        "description": "(DEVICE_TYPING | Sequence[DEVICE_TYPING] | None) - The device for the environment."
+    },
+    {
+        "arg": "policy_device",
+        "description": "(DEVICE_TYPING | Sequence[DEVICE_TYPING] | None) - The device for the policy."
+    },
+    {
+        "arg": "create_env_kwargs",
+        "description": "(Optional[Sequence[dict]]) - Keyword arguments to pass to create_env_fn."
+    },
+    {
+        "arg": "max_frames_per_traj",
+        "description": "(int | None) - The maximum number of frames per trajectory."
+    },
+    {
+        "arg": "init_random_frames",
+        "description": "(int | None) - The initial random frames."
+    },
+    {
+        "arg": "reset_at_each_iter",
+        "description": "(bool) - Whether to reset at each iteration."
+    },
+    {
+        "arg": "postproc",
+        "description": "(Optional[Callable[[TensorDictBase], TensorDictBase]]) - A post-processing function for the data."
+    },
+    {
+        "arg": "split_trajs",
+        "description": "(Optional[bool]) - Whether to split trajectories."
+    },
+    {
+        "arg": "exploration_type",
+        "description": "(ExplorationType) - The type of exploration used."
+    },
+    {
+        "arg": "reset_when_done",
+        "description": "(bool) - Whether to reset when done."
+    },
+    {
+        "arg": "update_at_each_batch",
+        "description": "(bool) - Whether to update at each batch."
+    },
+    {
+        "arg": "preemptive_threshold",
+        "description": "(float) - The preemptive threshold."
+    },
+    {
+        "arg": "num_threads",
+        "description": "(int) - The number of threads used."
+    },
+    {
+        "arg": "num_sub_threads",
+        "description": "(int) - The number of sub-threads used. (default: 1)"
+    },
+    {
+        "arg": "set_truncated",
+        "description": "(bool) - Whether to set truncated."
+    }
+]
+2024-12-02 17:21:46
+function next description: 
+[blue]This function is a placeholder that delegates to the parent class's `next` method, effectively bypassing any custom implementation. It should be used when you want to maintain the default behavior of the parent class while still providing a consistent interface for subclasses.[/blue]
+2024-12-02 17:21:46
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:21:58
+function shutdown description: 
+[blue]This function is a placeholder for overriding the `shutdown` method in PyTorch models, allowing developers to perform custom cleanup actions before model destruction.[/blue]
+2024-12-02 17:21:58
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:22:16
+function set_seed description: 
+[blue]This function is used to set a random seed for reproducibility in PyTorch models. It ensures that the same sequence of random numbers is generated every time the model is run with the same seed value, making it easier to debug and test models.[/blue]
+2024-12-02 17:23:07
+[
+    {
+        "arg": "seed",
+        "description": " (int) - The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) - Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 17:23:20
+function state_dict description: 
+[blue]This function is used to retrieve the model's state dictionary, which contains the learned parameters and their values, allowing for model loading and saving.[/blue]
+2024-12-02 17:23:20
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:23:37
+function load_state_dict description: 
+[blue]This function is used to load the state dictionary of a PyTorch model from an existing checkpoint or saved model. It allows for the transfer of learned parameters and other model state between different runs or environments, enabling faster development and deployment.[/blue]
+2024-12-02 17:24:21
+[
+    {
+        "arg": "state_dict",
+        "description": "(OrderedDict) - The model state dictionary to be loaded into the current state."
+    }
+]
+2024-12-02 17:33:22
+function split_trajectories description: 
+[blue]This is a PyTorch implementation of the `split` function from the `torch.nn.utils.rnn` module. The purpose of this function is to split a tensor into multiple tensors, each containing a subset of the original data.
+
+Here's a breakdown of what the code does:
+
+1. It first checks if a `trajectory_key` is provided. If it is, it uses that key to determine the shape of the output tensors.
+2. If no `trajectory_key` is provided, it falls back to using the `'traj_ids'` key and sets the corresponding mask tensor to all ones.
+3. It then splits the input tensor into multiple tensors, each containing a subset of the original data. The number of subsets depends on the length of the input tensor.
+4. For each subset, it pads the tensor with zeros to ensure that all subsets have the same shape.
+5. Finally, it returns a stack of the padded tensors.
+
+The code uses several PyTorch-specific features, such as:
+
+* `torch._nested_view_from_buffer`: This function is used to create a nested view of a tensor, which allows for efficient computation on tensors with complex structures.
+* `torch.nested.nested_tensor: This function is used to create a nested tensor from a list of tensors.
+* `torch.ones`: This function is used to create a tensor filled with ones.
+
+The code also uses some PyTorch-specific functions and variables, such as:
+
+* `out_splits`
+* `as_nested`
+* `layout`
+
+Overall, this code appears to be part of a larger library or framework for working with tensors in PyTorch.[/blue]
+2024-12-02 17:34:47
+[
+    {
+        "arg": "rollout_tensordict",
+        "description": "(TensorDictBase) - The rollout tensor dictionary to be split into trajectories."
+    },
+    {
+        "arg": "prefix",
+        "description": "(str | None) - The prefix for the trajectory keys. (default: None)"
+    },
+    {
+        "arg": "trajectory_key",
+        "description": "(NestedKey | None) - The key for the trajectory data in the rollout tensor dictionary."
+    },
+    {
+        "arg": "done_key",
+        "description": "(NestedKey | None) - The key for the done signal in the rollout tensor dictionary."
+    },
+    {
+        "arg": "as_nested",
+        "description": "(bool) - Whether to return the trajectory data as a nested dictionary. (default: False)"
+    }
+]
+2024-12-02 17:34:47
+Total elapsed time (GenDescription Workflow): -62.74447028636932 min
+2024-12-02 17:35:11
+function recursive_map_to_cpu description: 
+[blue]This function is used to recursively map PyTorch tensors and ordered dictionaries from the GPU to the CPU. It's significant for transferring models or data between devices, ensuring compatibility with different hardware configurations.[/blue]
+2024-12-02 17:35:51
+[
+    {
+        "arg": "dictionary",
+        "description": "(OrderedDict) - The ordered dictionary to be mapped to CPU."
+    }
+]
+2024-12-02 17:36:12
+class DataCollectorBase description: 
+[blue]This class is a base class for data collectors in PyTorch, providing a common interface for updating model weights and other state during training or testing. It allows for flexible customization of the data collection process through its methods, such as `update_policy_weights_` and `set_seed`, making it a crucial component in building robust and efficient machine learning pipelines.[/blue]
+2024-12-02 17:36:35
+function update_policy_weights_ description: 
+[blue]This function is used to update the weights of a policy in PyTorch, ensuring consistency across devices when using data collectors and trained policies.[/blue]
+2024-12-02 17:37:18
+[
+    {
+        "arg": "policy_weights",
+        "description": "(Optional[TensorDictBase]) - The policy weights to be updated. (default: None)"
+    },
+    {
+        "arg": "_",
+        "description": " (...) -> None"
+    }
+]
+2024-12-02 17:37:33
+function next description: 
+[blue]This function is used to retrieve the next item from an iterator, handling cases where the iterator has reached its end.[/blue]
+2024-12-02 17:37:33
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:37:46
+function shutdown description: 
+[blue]This function is an abstract method that serves as a hook for customizing the shutdown process of a PyTorch module, allowing developers to implement specific cleanup actions before the module is unloaded.[/blue]
+2024-12-02 17:37:46
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:37:58
+function iterator description: 
+[blue]This function is an abstract base class method that defines the interface for creating an iterator over a TensorDict, allowing for iteration over its key-value pairs or values.[/blue]
+2024-12-02 17:37:58
+[
+    {
+        "arg": "None"
+    }
+]
+2024-12-02 17:38:13
+function set_seed description: 
+[blue]This function is used to set a random seed for reproducibility in PyTorch models, ensuring that the same sequence of random numbers is generated during training and testing, thereby facilitating reliable comparisons and debugging.[/blue]
+2024-12-02 17:38:57
+[
+    {
+        "arg": "seed",
+        "description": " (int) - The random seed to be used. (default: None)"
+    },
+    {
+        "arg": "static_seed",
+        "description": " (bool) - Whether the static seed is used. (default: False)"
+    }
+]
+2024-12-02 17:39:10
+function state_dict description: 
+[blue]This function is used to serialize and retrieve the model's weights and biases into a dictionary, allowing for easy saving and loading of the model's state.[/blue]
+2024-12-02 17:39:10
+[
+    {
+        "arg": "None"
+    }
+]

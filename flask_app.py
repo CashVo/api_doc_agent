@@ -1,13 +1,20 @@
 from flask import Flask, render_template, request
-from utils import  helpers
-from workflow_manager import WorkflowManager
+from utils import  helpers, workflow
+from agents.llm_manager import LLMManager
+from agents.doc_parser_agent import DocParserAgent
+from agents.descriptor_agent import DescriptorAgent
+import content_curration_workflow
 
 app = Flask(__name__)
 
-WorkflowManager = WorkflowManager()
-AIAssistant = WorkflowManager.start_init_workflow()
+AIAssistant = LLMManager()
+# Agents
+agents = {
+    "parserAgent": DocParserAgent(),
+    'descriptorAgent': DescriptorAgent(AIAssistant)
+}
 
-print("ReAct agent initialized!!! Reay to chat...")
+helpers.rich_print("\nMulti-ReAct agent initializing!!! \n", "APP:")
 
 
 @app.route("/")
@@ -29,4 +36,5 @@ def query():
     return { "response": html_response }, 200
 
 if __name__ == "__main__":
-   app.run(debug=True)
+    content_curration_workflow.start_curration_workflow(agents)
+    app.run(debug=True)
