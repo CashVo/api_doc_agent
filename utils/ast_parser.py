@@ -1,5 +1,6 @@
 import ast, json, re
 from utils import helpers, settings
+from typing import List, Dict
 
 
 class ASTParser:
@@ -63,14 +64,11 @@ class ASTParser:
                 return None
 
             if ( isinstance(fn, ast.FunctionDef) and ((fn.name == '__init__') or not fn.name.startswith('_')) ):
-                args = {
-                    "args": [*(arg.arg for arg in fn.args.args)],  # positional args
-                    "varagrs": [fn.args.vararg.arg if fn.args.vararg else None],  # vararg
-                    "kwargs": [fn.args.kwarg.arg if fn.args.kwarg else None],  # kwarg
-                    "kwonlyargs": [*(arg.arg for arg in fn.args.kwonlyargs)]  # keyword-only args
-                }
                 fn_raw = ast.unparse(fn)
                 fn_signature = self._parse_fn_sig(fn_raw)
+                args = self._parse_args_signature(fn_signature)
+                
+
                 fn_info = {
                     "function_name": fn.name,
                     "args": args,
@@ -93,3 +91,38 @@ class ASTParser:
                 return match.group(1)
             else:
                 return None
+            
+        def _parse_args_signature(self, signature: str) -> List[Dict[str, str]]:
+            # Remove the function name and opening parenthesis
+            args_section = signature.split("(", 1)[1].rsplit(")", 1)[0]
+
+            if "__init__" in signature:
+                pass
+
+            # Regex to capture arguments in the format:
+            # arg_name: type_hint=default_value
+            arg_pattern = re.compile(
+                r"""
+                (?P<arg_name>[\w*]+)             # Argument name, including '*' or '**'
+                (?:\s*:\s*(?P<return_type>(?:[^\[,=])*(?:(\[([^:])*\])*)(?:[^=,]*)))?  # Optional type hint
+                (?:\s*=\s*(?P<default_value>[^,]+))? # Optional default value
+                """,
+                re.VERBOSE,
+            )
+
+            # (?:\s*:\s*(?P<return_type>[^\[,]+(?:(\[([^\]]|[\]])*\])*)(?:[^=,]*)))
+
+            # Parse arguments
+            args = []
+            ignored_set = set(["self", "*", "*args", "**kwargs"]) # Drop these args from the list
+            for match in arg_pattern.finditer(args_section):
+                arg = {
+                    "arg_name": match.group("arg_name").strip(),
+                    "return_type": (match.group("return_type") or "").strip(),
+                    "default_value": (match.group("default_value") or "").strip(),
+                    "description": ""
+                }
+                if arg["arg_name"] not in ignored_set:
+                    args.append(arg) 
+
+            return args
