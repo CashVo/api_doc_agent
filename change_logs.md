@@ -1,5 +1,43 @@
 # Change Log
 
+## 12/4/24
+* Prompt templates: free-form => XML
+  * Converting the template from free-form text format to a structured XML format
+  * Had an issue LLM treating `<examples>` too literally where it often times uses the example description exactly for a thing that doesn't even relate
+  * I removed the `<examples>` block and now the descriptions for each item are now much better.
+* Args processing: all at once => one at a time
+  * I parsed the func signature to get each arguments into its own JSON object and prompted the LLM to provide desription to each - one at a time.
+    * Description seems to be much higher quality and more accurate
+    * Steps goes from 91 to 120....but total elapsed time to prompt LLM in both cases comes out to be the same: 62mins ... fastest run finished at 45mins
+  * Got this to work by using just 1 prompt template for all 3 cases (class, function, and parameter) - since the end goal is to ask LLM to generate a description, there is no need to treat that task special
+    * Args are each captured more accurately during the parse phase and we can use all the info from there to help form the final description structure at the end.
+    * here's an example:
+    ```
+    {
+      "function_name": "set_seed",
+      "args": [
+          {
+              "arg_name": "seed",
+              "return_type": "int",
+              "default_value": "",
+              "description": "This parameter is used to initialize the random number generator, allowing for reproducibility of results and enabling users to set a specific starting point for their random number generation."
+          },
+          {
+              "arg_name": "static_seed",
+              "return_type": "bool",
+              "default_value": "False",
+              "description": "This parameter is used to enable or disable the use of a static seed for random number generation, allowing for reproducibility and deterministic behavior in simulations."
+          }
+      ],
+      "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int",
+      "function_code": "def set_seed(self, seed: int, static_seed: bool=False) -> int:\n    return super().set_seed(seed, static_seed)",
+      "description": "This function is used to initialize a random number generator with a specified seed value, allowing for reproducibility and control over the sequence of random numbers generated. The function takes an optional parameter 'static_seed' which defaults to False, indicating whether the seed should be set as static or not."
+  }
+  ```
+* Commit status:
+```
+```
+
 ## 12/2/24
 * Workflow: Clarify what a step is and added function calling. Do away with `workflow_manager` because it does not make sense in the current implementation. Might add it back in later.
 * Settings and helpers: started to use these more in this check in. Plans to continue adding to these spaces as needed (e.g.: Might add a "storage" space to the settings to manage in-memory storage)
