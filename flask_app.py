@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from utils import  helpers, workflow
+from utils import  helpers, workflow, storage
 from agents.llm_manager import LLMManager
 from agents.doc_parser_agent import DocParserAgent
 from agents.descriptor_agent import DescriptorAgent
@@ -8,6 +8,7 @@ import content_curration_workflow
 app = Flask(__name__)
 
 AIAssistant = LLMManager()
+memory = storage.Storage()
 # Agents
 agents = {
     "parserAgent": DocParserAgent(),
@@ -36,5 +37,5 @@ def query():
     return { "response": html_response }, 200
 
 if __name__ == "__main__":
-    content_curration_workflow.start_curration_workflow(agents)
+    content_curration_workflow.start_curration_workflow(agents, memory)
     app.run(debug=True)

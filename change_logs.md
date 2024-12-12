@@ -1,5 +1,49 @@
 # Change Log
 
+## 12/11/24
+Mainly code restructuring to help streamline work in later steps
+* Parser Phase Flow: sequential => user defined
+  * Updated this workflow to enable user defined steps. Rather then starting at step 1 each time, the user gets to define where to start. 
+  * Mainly to help us move faster during the development phase. Since we write the results to file at each step, there is no need to start from the beginning every time.
+* Memory Management: Added structure to help manage state and storage memory
+  * Added a `Storage` class to help us manage memory
+    * `state`: in-memory storage
+    * `storage`: persistent storage (e.g.: file or db)
+* Parsing and storage: Instead of writing everything out to one file, which can be gigantic for an entire API, we will now store each processed packge in its own file. However, we will still maintain the entire API content in one JSON object in our `package_content` obj for downstream processing.
+  * For testing purposes and to help iterate faster (as well as focused debugging), I added a `dev_mode` flag that points to a different set of files to process.
+  * archived folder: I have moved old parsed files into an `archived` folder. 
+* Include docstring: Will now parse for any docstring and store it with the object.
+* Commit status:
+```
+  modified:   README.md
+  modified:   agents/descriptor_agent.py
+  modified:   change_logs.md
+  modified:   content_curration_workflow.py
+  modified:   data/content_files.json
+  modified:   data/log.txt
+  renamed:    data/processed/ast_out.json -> data/processed/archive/ast_out.json
+  renamed:    data/processed/class_definitions-1.json -> data/processed/archive/class_definitions-1.json
+  renamed:    data/processed/class_definitions-2.json -> data/processed/archive/class_definitions-2.json
+  renamed:    data/processed/class_definitions-3.json -> data/processed/archive/class_definitions-3.json
+  new file:   data/processed/archive/class_definitions.json
+  renamed:    data/processed/gen_desriptions-1.json -> data/processed/archive/gen_desriptions-1.json
+  renamed:    data/processed/gen_desriptions-2-args.json -> data/processed/archive/gen_desriptions-2.json
+  renamed:    data/processed/gen_desriptions-3-arg.json -> data/processed/archive/gen_desriptions-3-arg.json
+  renamed:    data/processed/gen_desriptions.json -> data/processed/archive/gen_desriptions.json
+  renamed:    data/processed/class_definitions.json -> data/processed/archive/gen_desriptions4.json
+  new file:   data/processed/class_definitions/dev_data/collectors/collectors.py
+  new file:   data/processed/class_definitions/dev_data/collectors/distributed/utils.py
+  new file:   data/processed/class_definitions/dev_data/collectors/utils.py
+  new file:   data/processed/gen_descriptions/dev_data/collectors/collectors.py
+  new file:   data/processed/gen_descriptions/dev_data/collectors/distributed/utils.py
+  new file:   data/processed/gen_descriptions/dev_data/collectors/utils.py
+  modified:   flask_app.py
+  modified:   utils/ast_parser.py
+  modified:   utils/helpers.py
+  modified:   utils/settings.py
+  new file:   utils/storage.py
+```
+
 ## 12/4/24
 * Prompt templates: free-form => XML
   * Converting the template from free-form text format to a structured XML format
@@ -32,11 +76,22 @@
       "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int",
       "function_code": "def set_seed(self, seed: int, static_seed: bool=False) -> int:\n    return super().set_seed(seed, static_seed)",
       "description": "This function is used to initialize a random number generator with a specified seed value, allowing for reproducibility and control over the sequence of random numbers generated. The function takes an optional parameter 'static_seed' which defaults to False, indicating whether the seed should be set as static or not."
-  }
-  ```
+    }
+    ```
 * Commit status:
-```
-```
+  ```
+  modified:   agents/descriptor_agent.py
+  modified:   data/log.txt
+  new file:   data/processed/class_definitions-1.json
+  new file:   data/processed/class_definitions-2.json
+  new file:   data/processed/class_definitions-3.json
+  modified:   data/processed/class_definitions.json
+  new file:   data/processed/gen_desriptions-2-args.json
+  modified:   data/processed/gen_desriptions.json
+  modified:   utils/ast_parser.py
+  modified:   utils/prompt_helper.py
+  modified:   change_logs.md
+  ```
 
 ## 12/2/24
 * Workflow: Clarify what a step is and added function calling. Do away with `workflow_manager` because it does not make sense in the current implementation. Might add it back in later.

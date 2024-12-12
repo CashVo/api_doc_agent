@@ -4,7 +4,7 @@ This project implements an end2end experience for an API content writer. It cons
 2. The content serving process. This is where end users can interact with a Chat Agent via a GUI to learn about the API and how to use it in their own projects.
 
 ## Workflow Diagram - Overview
-The conceptual overview of what this project aims to accomplish is as follows.
+The conceptual overview for this project is as follows.
 ![Overview diagram](utils/assets/e2e%20Doc%20Agent%20workflow.png)
 
 ## Currating Features
@@ -34,6 +34,9 @@ These are some key features relating to the serving of content process.
   * Phase 3: Focus on RAG Chat Assistant to serve user queries about our content
 
 ## Remarks
-*
+* Source files: To stay fully local, I did a clone of the public repo I am using as my source files. 
+  * That repo is here: https://github.com/PyTorchRL/rl/tree/main 
+  * For dev, I target the `collections` package: https://github.com/PyTorchRL/rl/tree/main/torchrl/collectors
+* 
 
 > See [Change Log](change_logs.md) for more details on change history

@@ -45,6 +45,7 @@ class ASTParser:
             class_signature = {
                 "class_name": node.name,
                 "bases": [base.id for base in node.bases], # Subclass of...
+                "docstring": self._get_docstring(node),
                 "description": "",
                 "overview": "",
                 "functions": []
@@ -74,6 +75,7 @@ class ASTParser:
                     "args": args,
                     "signature": fn_signature,
                     "function_code": fn_raw,
+                    "docstring": self._get_docstring(fn),
                     "description": ""
                 }
                 #storage.append(fn_info)
@@ -81,7 +83,11 @@ class ASTParser:
             else:
                 return None
             
-                    
+        def _get_docstring(self, node):
+            '''Return the docstring or an empty string'''
+            ds = ast.get_docstring(node)
+            return ds if ds is not None else ""
+        
         def _parse_fn_sig(self, string):
             '''Parse the function signature from a string'''
 

@@ -2,5 +2,10 @@
     "files":[
         "../rl/torchrl/collectors/collectors.py",
         "../rl/torchrl/collectors/utils.py"
+    ],
+    "dev_files": [
+        "../dev_data/collectors/collectors.py",
+        "../dev_data/collectors/utils.py",
+        "../dev_data/collectors/distributed/utils.py"
     ]
 }

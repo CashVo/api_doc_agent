@@ -8,7 +8,10 @@ console = Console(stderr=True) # For loging formatted text to the console - with
 
 def rich_hr(text, line_style = "dark_green", align="center"):
     '''Print a stylized horizontal ruler (hr) to the console'''
-    console.rule(f"[bold green]{text}[/bold green]", style=line_style, align=align)
+    console.rule(f"[bold green]{text}[/bold green]\n", style=line_style, align=align)
+
+def ask_user(question):
+    return console.input(f'[bold red on white] {question} [/bold red on white]')
 
 def rich_print(text, type=None):
     '''Print text to console with formatting and color support
@@ -26,9 +29,9 @@ def rich_print(text, type=None):
     str = ""
     match type:
         case "warning":
-            str = "[bold orange]WARNING:[/bold orange] "
+            str = "[bold red]WARNING:[/bold red] "
         case "error": 
-            str = "[bold red]ERROR:[/bold red] "
+            str = "[bold red on white]ERROR:[/bold red on white] "
         case "note": 
             str = "[bold green]NOTE:[/bold green] "
         case "hint": 
@@ -63,25 +66,33 @@ def open_file(file_name, type="json"):
     try:
         with open(file_name, 'r') as f:
             content = json.load(f) if type == "json" else f.read()
+            return content
     except FileNotFoundError:
         print("The file was not found: " + file_name)
     except json.JSONDecodeError:
         print("The file is not a valid JSON.")
 
-    return content
 
 def write_to_file(file_name, content, mode='a'):
     '''Write the `content` to the given file path (full path with file name)
 
     - 'a': append mode (default), will create file if it doesn't exists and append `content` to end of file
     '''
+    os.makedirs(os.path.dirname(file_name), exist_ok=True)
     with open(file_name, mode) as f:
         f.write(content + "\n")
 
-def get_file_name(fpath):
-    '''Given a file path, return the file name (e.g.: file.ext)'''
-    fname = os.path.basename(fpath)
-    return fname
+def get_file_name(fpath):    
+    return fpath.replace("../", "") # Strip any relative paths and return the rest of the path
+
+    # NOTE: Since we are saving each individual files, we will keep it's original path so we can track progress easier
+
+    # fname = os.path.basename(fpath)
+    # pattern = r'../dev_data/(.*)'
+    # match = re.search(pattern, fpath)
+    # if match:
+    #     return match.group(1)
+    # return None
 
 def get_timestamp():
     '''Return a timestamp as of now.'''
