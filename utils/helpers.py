@@ -82,8 +82,13 @@ def write_to_file(file_name, content, mode='a'):
     with open(file_name, mode) as f:
         f.write(content + "\n")
 
-def get_file_name(fpath):    
-    return fpath.replace("../", "") # Strip any relative paths and return the rest of the path
+def get_file_name(fpath):
+    fp = ""
+    if "data/raw" in fpath:
+        fp = fpath.replace("data/raw/", "")
+    elif ".." in fpath:
+        fp = fpath.replace("../", "")
+    return fp
 
     # NOTE: Since we are saving each individual files, we will keep it's original path so we can track progress easier
 

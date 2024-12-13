@@ -4,8 +4,11 @@
         "../rl/torchrl/collectors/utils.py"
     ],
     "dev_files": [
-        "../dev_data/collectors/collectors.py",
-        "../dev_data/collectors/utils.py",
-        "../dev_data/collectors/distributed/utils.py"
+        "data/raw/dev_data/collectors/collectors.py"
+        
+    ],
+    "debug_files": [
+        "data/raw/dev_data/collectors/utils.py",
+        "data/raw/dev_data/collectors/distributed/utils.py"
     ]
 }

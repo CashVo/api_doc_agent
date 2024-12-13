@@ -71,7 +71,8 @@ class Storage():
         '''Load content into container'''
         for file in files:
             fname = helpers.get_file_name(file)
-            content = helpers.open_file(f"data/processed/{fpath}/{fname}")
+            fp = self.get_storage_path(fpath) + fname #full path
+            content = helpers.open_file(fp)
 
-            helpers.rich_print(f"Content loaded: [bold purple]{fname}[/bold purple]", "note")
+            helpers.rich_print(f"Content loaded to: [bold purple]{fp}[/bold purple]", "note")
             self.save_state("package_content", content)

@@ -31,66 +31,6 @@
                     "function_code": "def next(self):\n    try:\n        if self._iterator is None:\n            self._iterator = iter(self)\n        out = next(self._iterator)\n        out.clear_device_()\n        return out\n    except StopIteration:\n        return None",
                     "docstring": "",
                     "description": ""
-                },
-                {
-                    "function_name": "shutdown",
-                    "args": [],
-                    "signature": "shutdown(self)",
-                    "function_code": "@abc.abstractmethod\ndef shutdown(self):\n    raise NotImplementedError",
-                    "docstring": "",
-                    "description": ""
-                },
-                {
-                    "function_name": "iterator",
-                    "args": [],
-                    "signature": "iterator(self) -> Iterator[TensorDictBase]",
-                    "function_code": "@abc.abstractmethod\ndef iterator(self) -> Iterator[TensorDictBase]:\n    raise NotImplementedError",
-                    "docstring": "",
-                    "description": ""
-                },
-                {
-                    "function_name": "set_seed",
-                    "args": [
-                        {
-                            "arg_name": "seed",
-                            "return_type": "int",
-                            "default_value": "",
-                            "description": ""
-                        },
-                        {
-                            "arg_name": "static_seed",
-                            "return_type": "bool",
-                            "default_value": "False",
-                            "description": ""
-                        }
-                    ],
-                    "signature": "set_seed(self, seed: int, static_seed: bool=False) -> int",
-                    "function_code": "@abc.abstractmethod\ndef set_seed(self, seed: int, static_seed: bool=False) -> int:\n    raise NotImplementedError",
-                    "docstring": "",
-                    "description": ""
-                },
-                {
-                    "function_name": "state_dict",
-                    "args": [],
-                    "signature": "state_dict(self) -> OrderedDict",
-                    "function_code": "@abc.abstractmethod\ndef state_dict(self) -> OrderedDict:\n    raise NotImplementedError",
-                    "docstring": "",
-                    "description": ""
-                },
-                {
-                    "function_name": "load_state_dict",
-                    "args": [
-                        {
-                            "arg_name": "state_dict",
-                            "return_type": "OrderedDict",
-                            "default_value": "",
-                            "description": ""
-                        }
-                    ],
-                    "signature": "load_state_dict(self, state_dict: OrderedDict) -> None",
-                    "function_code": "@abc.abstractmethod\ndef load_state_dict(self, state_dict: OrderedDict) -> None:\n    raise NotImplementedError",
-                    "docstring": "",
-                    "description": ""
                 }
             ]
         }

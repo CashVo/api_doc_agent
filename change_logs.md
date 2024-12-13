@@ -1,5 +1,56 @@
 # Change Log
 
+## 12/13/24
+* Added Grader and Editor agents
+* After generating the description, we pass the resulting text to GraderAgent
+  * If GraderAgent grade the description other then "[GREAT]" then we pass the suggestions into the EditorAgent to regenerate the description based on the suggestions. Otherwise, we keep the original description.
+  * Also, we stored the suggestions with the object.
+* Moved the "dev_data" inside our project under "data/raw/dev_data". 
+* Added a Planner to the DescriptorAgent
+  * Update the `tasks` parameter to target which process you want to run (e.g: "get_desription" or "get_suggestions")
+  * `get_suggestions`: A new function is added to start the process by prompting the LLM to "plan" and then sending those "suggestions" to the EditorAgent to generate the description.
+* Observations:
+  * Majority of the grade came back as "[GREAT]" and only a few "[OK]". Somehow, the LLM has switched to be more negative and have been grading the generated desriptions as "[POOR]". Not sure why.
+  * Suggestions:
+    * Some great suggestions here but applying them would make the descriptions a lot longer.
+* Experiments:
+    1) Based on the suggestions, I tried deviating the length limit for the different type. For example: (class limits to 2 paragraphs, function limits to 1 paragraph, and args limits to 2 sentences).
+    2) Rather then generating the description first, I modified the DescriptorAgent to generate instructions for how to best describe the code. Then, ask the EditorAgent to generate the description. Followed by the grader and invoke the EditorAgent if the grade is not GREAT.
+    3) Example: I tried adding an example block and LLM kep regergitating the example text. Not sure why it is treating example text in that way. It was supposed to use it as a guide only. But it is using it as the actual response. [FIXED]
+
+* Commit status:
+```
+  modified:   README.md
+  modified:   agents/base_agent.py
+  modified:   agents/descriptor_agent.py
+  new file:   agents/editor_agent.py
+  new file:   agents/grader_agent.py
+  modified:   change_logs.md
+  modified:   data/content_files.json
+  modified:   data/log.txt
+  modified:   data/processed/class_definitions/dev_data/collectors/collectors.py
+  new file:   data/processed/gen_descriptions/dev_data/collectors/collectors-descriptor.py
+  new file:   data/processed/gen_descriptions/dev_data/collectors/collectors-planner.py   
+  deleted:    data/processed/gen_descriptions/dev_data/collectors/collectors.py
+  new file:   data/processed/gen_descriptions/dev_data/collectors/collectors1.py
+  new file:   data/processed/gen_descriptions/dev_data/collectors/collectors2.py
+  modified:   data/processed/gen_descriptions/dev_data/collectors/distributed/utils.py    
+  modified:   data/processed/gen_descriptions/dev_data/collectors/utils.py
+  new file:   data/raw/dev_data/collectors/__init__.py
+  new file:   data/raw/dev_data/collectors/collectors.py
+  new file:   data/raw/dev_data/collectors/distributed/__init__.py
+  new file:   data/raw/dev_data/collectors/distributed/default_configs.py
+  new file:   data/raw/dev_data/collectors/distributed/generic.py        
+  new file:   data/raw/dev_data/collectors/distributed/ray.py
+  new file:   data/raw/dev_data/collectors/distributed/rpc.py
+  new file:   data/raw/dev_data/collectors/distributed/sync.py
+  new file:   data/raw/dev_data/collectors/distributed/utils.py
+  new file:   data/raw/dev_data/collectors/utils.py
+  modified:   utils/helpers.py
+  modified:   utils/prompt_helper.py
+  modified:   utils/storage.py
+```
+
 ## 12/11/24
 Mainly code restructuring to help streamline work in later steps
 * Parser Phase Flow: sequential => user defined

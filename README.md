@@ -27,6 +27,10 @@ These are some key features relating to the serving of content process.
 1. Activate the virtual environment: `venv/Scripts/activate`
 1. Run the Flask agent: `python flask_app.py`...follow instructions in terminal to find the web endpoint for the Agent's Web UI. Start chatting with the Doc Bot Agent from there.
 
+NOTE:
+* To try the "Planner" path, open `descriptor_agent.py` and change `task = self.function["get_suggestions"]` (on line 26)
+* To use a different set of code files, add them to the `data/raw/` folder and update the `dev_files` list (found in the `content_files.json` file)
+
 ## Action plan:
   * Phase 1: Focus on content curration **[Status: In progress]**
   * ![Content Curration Diagram](utils/assets/content_curration_workflow.png)
